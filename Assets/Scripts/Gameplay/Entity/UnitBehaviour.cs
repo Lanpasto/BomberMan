@@ -10,16 +10,10 @@ public class UnitBehaviour : MonoBehaviour
     public UnitControlBehaviour unitControlBehaviour;
 
     private Vector2 unitPositionOnMap;
-    
-    private void OnEnable()
-    {
-        unitControlBehaviour.OnAction += UnitActions;
+    public Vector2 GeUnitPositionOnMap(){
+        return unitPositionOnMap;
     }
     
-    private void OnDisable()
-    {
-        unitControlBehaviour.OnAction -= UnitActions;
-    }
 
     public StatAttribute GetStat(string id)
     {
@@ -29,18 +23,6 @@ public class UnitBehaviour : MonoBehaviour
     public void AddStat(StatAttribute statAttribute)
     {
         this.RuntimeStatAttributeContainer.Stats.StatAttributes.Add(statAttribute);
-    }
-
-    
-
-    private void UnitActions(InputManager.PlayerAction action)
-    {
-        switch (action)
-        {
-            case InputManager.PlayerAction.bomb:
-                //BOMB
-                break;
-        }
     }
 
     private void Update()
