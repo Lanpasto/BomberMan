@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 2023826315}
   - component: {fileID: 2023826314}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: BlockContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -244,11 +244,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255fba096b997634ba8b7cb390170a0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 7621056738289843423, guid: 99825c1a4f885ee4b941953d6fb44c47, type: 3}
-  prefab1: {fileID: 5447656383657322863, guid: 49ff1b5bfcd215747b0e058ecf28ec57, type: 3}
-  prefab2: {fileID: 7729949280650020467, guid: 0ce5a79ebe37bfe4186939557a86aeb1, type: 3}
-  prefab3: {fileID: 8613553279742341254, guid: 2d888b291b84b7b4685edf40bdc87214, type: 3}
-  width: 17
+  BlockPrefab: {fileID: -8532560828177289710, guid: 4aad310afde81fd42a9526ef859b60e0, type: 3}
+  EmptyBlock: {fileID: 11400000, guid: b06057be77cf9ee44b4f534dba2661fd, type: 2}
+  Bedrock: {fileID: 11400000, guid: 3bcda98477cc36c41a4a19c29ce5b819, type: 2}
+  Brick: {fileID: 11400000, guid: aaeb844e0497ffa429ca2a753a51da8c, type: 2}
+  width: 13
+  spawnProbability: 0.33
   height: 17
 --- !u!4 &2023826315
 Transform:

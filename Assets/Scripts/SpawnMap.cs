@@ -4,70 +4,31 @@ using UnityEngine;
 
 public class SpawnMap : MonoBehaviour
 {
-    [SerializeReference] private GameObject prefab;
-    [SerializeReference] private GameObject prefab1;
-    [SerializeReference] private GameObject prefab2;
-    [SerializeReference] private GameObject prefab3;
+    [SerializeField] private BlockBehaviour BlockPrefab;
+    [SerializeField] private BlockDeScription EmptyBlock;
+    [SerializeField] private BlockDeScription Bedrock;
+    [SerializeField] private BlockDeScription Brick;
+
     [SerializeReference] private int width = 22;
     [SerializeReference] private float spawnProbability = 0.5f;
-
     [SerializeReference] private int height = 12;
     private List<Vector3> validCoordinates;
-
+    private BlockBehaviour[,] mapInfo;
+    
     private void Start()
     {
-        Vector3[,] coordinates = SpawnBrick();
+        GenerateMap();
+      
+    }
+
+    public void GenerateMap(){
+        mapInfo = new BlockBehaviour[width, height];
+         Vector3[,] coordinates = SpawnBrick();
         List<Vector3> excludedCoordinates = CreateExcludedCoordinatesList();
         List<Vector3> validCoordinates1 = GenerateUnBreakWall(coordinates, excludedCoordinates);
         GenerateBricks(coordinates, excludedCoordinates, validCoordinates1);
     }
-    private Vector3[,] SpawnBrick()
-    {
-
-        Vector3[,] coordinates = new Vector3[width, height];
-
-        for (int i = 0; i < width; ++i)
-        {
-            for (int z = 0; z < height; ++z)
-            {
-
-                coordinates[i, z] = new Vector3(i, z, 0f);
-                GameObject obj = Instantiate(prefab, transform.position, Quaternion.identity);
-                obj.transform.position = new Vector3(i, z, 0f);
-                InstantiateBrickPrefab(coordinates[i, z]);
-                //  Debug.Log("Coordinates[" + i + "," + z + "]: " + coordinates[i, z]);
-            }
-
-        }
-        // Додаємо рамку навколо прямокутної області
-        CreateFrame(coordinates);
-        return coordinates;
-    }
-    private void InstantiateBrickPrefab(Vector3 position)
-    {
-        // Створюємо прямокутні об'єкти в прямокутній області
-        Instantiate(prefab, position, Quaternion.identity);
-    }
-
-    private void CreateFrame(Vector3[,] coordinates)
-    {
-        for (int i = -1; i <= width; ++i)
-        {
-            for (int z = -1; z <= height; ++z)
-            {
-                // Якщо координата знаходиться всередині прямокутної області, пропустити
-                if (i >= 0 && i < width && z >= 0 && z < height)
-                {
-                    continue;
-                }
-
-                // Інакше, створити прямокутний об'єкт для утворення рамки
-                Instantiate(prefab2, new Vector3(i, z, 0f), Quaternion.identity);
-            }
-        }
-    }
-
-    //Спавн гравців
+        //Спавн гравців
     private List<Vector3> CreateExcludedCoordinatesList()
     {
         return new List<Vector3>
@@ -81,12 +42,62 @@ public class SpawnMap : MonoBehaviour
         };
 
     }
+   private Vector3[,] SpawnBrick()
+{
+    Vector3[,] coordinates = new Vector3[width, height];
+    List<Vector3> excludedCoordinates = CreateExcludedCoordinatesList();
+    List<Vector3> validCoordinates1 = GenerateUnBreakWall1(coordinates, excludedCoordinates);
+
+    for (int i = 0; i < width; ++i)
+    {
+        for (int z = 0; z < height; ++z)
+        {
+            Vector3 currentCoordinate = new Vector3(i, z, 0f);
+            if (!validCoordinates1.Contains(currentCoordinate))
+            {
+                coordinates[i, z] = currentCoordinate;
+                InstantiateBlock(coordinates[i, z], EmptyBlock,new Vector2(i,z));
+            }
+                       // Debug.Log("Coordinate at (" + i + ", " + z + "): " + coordinates[i, z]);
+
+        }
+    }
+
+    CreateFrame(coordinates);
+    return coordinates;
+}
+
+    //Рамка довкола
+    private void CreateFrame(Vector3[,] coordinates)
+    {
+        for (int i = -1; i <= width; ++i)
+        {
+            for (int z = -1; z <= height; ++z)
+            {
+
+                if (i >= 0 && i < width && z >= 0 && z < height)
+                {
+                    continue;
+                }
+
+
+                InstantiateBlock(new Vector3(i, z, 0f), Bedrock,Vector2.zero,true);
+            }
+        }
+    }
+
+
+    
     //Незламні кірпічі
     private List<Vector3> GenerateUnBreakWall(Vector3[,] coordinates, List<Vector3> excludedCoordinates)
     {
         List<Vector3> validCoordinates = FillValidCoordinates(coordinates, excludedCoordinates);
         WriteValidCoordinates(validCoordinates, coordinates);
-
+        return validCoordinates;
+    }
+       private List<Vector3> GenerateUnBreakWall1(Vector3[,] coordinates, List<Vector3> excludedCoordinates)
+    {
+        List<Vector3> validCoordinates = FillValidCoordinates(coordinates, excludedCoordinates);
         return validCoordinates;
     }
 
@@ -107,7 +118,7 @@ public class SpawnMap : MonoBehaviour
 
         return validCoordinates;
     }
-
+    //Запис координат
     private void WriteValidCoordinates(List<Vector3> validCoordinates, Vector3[,] coordinates)
     {
         if (validCoordinates == null || coordinates == null)
@@ -126,7 +137,7 @@ public class SpawnMap : MonoBehaviour
             }
 
             coordinates[(int)coordinate.x, (int)coordinate.y] = coordinate;
-            Instantiate(prefab2, coordinate, Quaternion.identity);
+            InstantiateBlock(coordinate, Bedrock, new Vector2(coordinate.x,coordinate.y));
         }
     }
     //Cтворення Кірпічів
@@ -138,136 +149,68 @@ public class SpawnMap : MonoBehaviour
             {
                 continue;
             }
-        //Instantiate(prefab3, coordinate, Quaternion.identity);
-        RandomInstantiateObject(coordinate, prefab3, spawnProbability);
+            RandomInstantiateObject(coordinate, Brick, spawnProbability,coordinates);
         }
     }
-    private void RandomInstantiateObject(Vector3 coordinate, GameObject objectToInstantiate, float spawnProbability)
-{
-    // Генеруємо випадкове число в діапазоні від 0 до 1
-    float spawnChance = Random.Range(0f, 1f);
-
-    // Перевіряємо, чи випадкове число менше заданої ймовірності
-    if (spawnChance < spawnProbability)
+    //Рандомайзер    
+    private void RandomInstantiateObject(Vector3 coordinate, BlockDeScription objectToInstantiate,
+     float spawnProbability,Vector3[,] coordinates )
     {
-        // Якщо так, то створюємо об'єкт за допомогою Instantiate
-        Instantiate(objectToInstantiate, coordinate, Quaternion.identity);
+
+        float spawnChance = Random.Range(0f, 1f);
+
+
+        if (spawnChance < spawnProbability)
+        {
+            InstantiateBlock(coordinate, objectToInstantiate,FindCoordinateIndices(coordinate,coordinates));
+        }
+    }
+
+    private void InstantiateBlock(Vector3 position, BlockDeScription description,Vector2  cordination, bool isFrame = false)
+    {
+        GameObject obj = Instantiate(BlockPrefab.gameObject, position, Quaternion.identity);
+        obj.GetComponent<BlockBehaviour>().InitializeBlock(description);
+        obj.transform.SetParent(this.transform);
+        
+
+        if (!isFrame)
+        {
+            mapInfo[Mathf.CeilToInt(cordination.x), Mathf.CeilToInt(cordination.y)] = obj.GetComponent<BlockBehaviour>();
+        }
+    }
+   private Vector2 FindCoordinateIndices(Vector3 coordinate,Vector3[,] coordinates )
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                // Check if the coordinate matches the position of the block in the array
+                if (coordinates[i, j].x == coordinate.x &&
+                    coordinates[i, j].y == coordinate.y)
+                {
+                    return new Vector2(i, j); // Return the indices if found
+                }
+            }
+        }
+
+        return Vector2.zero;
+    }
+    private void PrintMassive()
+    {
+        // Loop through the rows of the 2D array
+        for (int i = 0; i < width; i++)
+        {
+            string rowString = "";
+
+            // Loop through the columns of the 2D array
+            for (int j = 0; j < height; j++)
+            {
+                // Add the string representation of the element to the row string
+                rowString += "[" + i + "," + j + "]: " + mapInfo[i, j].ToString() + "  ";
+            }
+
+            // Print the row string
+            Debug.Log(rowString);
+        }
     }
 }
-
-    private void InstantiateBlock1(Vector3 position, GameObject blockPrefab3)
-    {
-        GameObject obj = Instantiate(blockPrefab3, position, Quaternion.identity);
-    }
-
-    private void InstantiateBlock(Vector3 position, GameObject blockPrefab2)
-    {
-        GameObject obj = Instantiate(blockPrefab2, position, Quaternion.identity);
-    }
-}
-    // private void PlayerSpawnPlace(Vector3[,] coordinates)
-    // {
-
-    //     coordinates[0, 12] = new Vector3(width - 1, 1, 0f);
-    //     coordinates[1, 11] = new Vector3(width - 2, 0, 0f);
-    //     coordinates[2, 12] = new Vector3(width - 1, 0, 0f);
-
-
-    //     coordinates[12, 0] = new Vector3(1, height - 1, 0f);
-    //     coordinates[11, 1] = new Vector3(0, height - 2, 0f);
-    //     coordinates[12, 2] = new Vector3(0, height - 1, 0f);
-
-
-    //     Instantiate(prefab1, coordinates[0, 12], Quaternion.identity);
-    //     Instantiate(prefab1, coordinates[1, 11], Quaternion.identity);
-    //     Instantiate(prefab1, coordinates[2, 12], Quaternion.identity);
-
-    //     Instantiate(prefab1, coordinates[12, 0], Quaternion.identity);
-    //     Instantiate(prefab1, coordinates[11, 1], Quaternion.identity);
-    //     Instantiate(prefab1, coordinates[12, 2], Quaternion.identity);
-    // }
-// private void SpawnBlocksEveryTwo(Vector3[,] coordinates)
-// {
-// for (int i = 1; i < coordinates.GetLength(0); i += 2) 
-// {   
-
-//     InstantiateBlock(coordinates[i, i+2]);
-//     InstantiateBlock(coordinates[i, i+2]);
-//     InstantiateBlock(coordinates[i, i+2]);
-//     InstantiateBlock(coordinates[i, i+2]);
-//     InstantiateBlock(coordinates[i, i+2]);
-// }
-// }
-// private void SpawnSpawnFirstPlayer(){
-//       GameObject[,] matrix = new GameObject[1, 11];
-
-
-//     for (int i = 0; i < width; ++i)
-//     {
-
-//         for (int z = 0; z < height; ++z)
-//         {
-//             GameObject obj = Instantiate(prefab1, transform.position, Quaternion.identity);
-//             obj.transform.position = new Vector3(i, z, 0f);
-//             matrix[i, z] = obj;
-//         }
-//     }
-// }
-// private void SpawnSpawnUnBreakWall(){
-//      for (int y = 1; y > 1; y--)
-//     {
-
-//     }
-// }
-// private void SpawnSpawnFirstPlayer()
-// {      
-//     int squareSize = 2;
-//     int startX = 0;
-//     int startY = height-1;
-//     for (int y = startY; y > startY - squareSize; --y)
-//     {
-
-//         for (int x = startX; x < startX + squareSize; x++)
-//         {
-
-//             GameObject obj = Instantiate(prefab1, transform.position, Quaternion.identity);
-//             obj.transform.position = new Vector3(x, y, 0f);
-//         }
-//     }
-// }
-// private void SpawnSpawnSecondPlayer()
-// {
-//     int squareSize = 2;
-//     int startX = width - squareSize; // startX буде ширина мінус розмір квадрата
-//     int startY = 1;
-
-//     for (int y = startY; y > startY - squareSize; y--)
-//     {
-//         for (int x = startX; x < startX + squareSize; x++)
-//         {
-//             GameObject obj = Instantiate(prefab1, transform.position, Quaternion.identity);
-//             obj.transform.position = new Vector3(x, y, 0f);
-//         }
-//     }
-// }
-
-//obj.transform.position = new Vector3(Random.Range(-5f, 5f), 0f, Random.Range(-5f, 5f));
-// Створюємо матрицю об'єктів для першої половини
-// for (int i = 1; i <= 2; ++i)
-// {
-//     for (int j = 11; j <= 12; ++j)
-//     {
-//         GameObject obj = Instantiate(prefab, transform.position, Quaternion.identity);
-//         obj.transform.position = new Vector3(i, j, 0f);
-//     }
-// }
-
-// // Створюємо матрицю об'єктів для другої половини
-// for (int i = 11; i <= 12; ++i)
-// {
-//     for (int j = 1; j <= 2; ++j)
-//     {
-//         GameObject obj = Instantiate(prefab, transform.position, Quaternion.identity);
-//         obj.transform.position = new Vector3(i, j, 0f);
-//     }
-// }
