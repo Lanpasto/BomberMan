@@ -6,19 +6,17 @@ using UnityEngine;
 
 public class BlockBehaviour : MonoBehaviour
 {
+    [HideInInspector] 
+    public Vector2 coordinates;
+    
     public bool breakeable;
-    public void InitializeBlock(BlockDeScription deScription)
+    public void InitializeBlock(BlockDeScription description, Vector2 coordinates)
     {
-
-        GetComponent<BoxCollider2D>().enabled = deScription.HasCollider2D;
-        GetComponent<SpriteRenderer>().sprite = deScription.sprite;
-        this.gameObject.isStatic = deScription._static;
-        this.name = deScription.nameBlock;
+        this.coordinates = coordinates;
+        GetComponent<BoxCollider2D>().enabled = description.HasCollider2D;
+        GetComponent<SpriteRenderer>().sprite = description.sprite;
+        this.gameObject.isStatic = description._static;
+        this.name = description.nameBlock;
     }
 
 }
-// bool breakeable = deScription.IsBreakable;
-// bool HasCollider2D = deScription.HasCollider2D;
-// bool _static = deScription._static;
-// Sprite sprite = deScription.sprite;
-// String nameBlock = deScription.nameBlock;

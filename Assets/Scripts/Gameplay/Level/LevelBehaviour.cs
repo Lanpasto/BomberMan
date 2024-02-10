@@ -6,9 +6,20 @@ using UnityEngine;
 public class LevelBehaviour : MonoBehaviour
 {
     public UnitDescriptionSO playerTestDescription;
+    public LevelPropetries LevelPropetries;
 
+    private SpawnMap mapGenerator;
+   
+    
     private void Start()
     {
+        mapGenerator = GetComponentInChildren<SpawnMap>();
+        
+        if(MapManager.Instance == null) {Debug.Log("SYKA");}
+        MapManager.Instance.SetMap(mapGenerator.GenerateMap(LevelPropetries.width, LevelPropetries.height));
+        
+        
+        
         SpawnPlayer(playerTestDescription);
     }
 

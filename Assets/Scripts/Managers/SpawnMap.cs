@@ -9,24 +9,27 @@ public class SpawnMap : MonoBehaviour
     [SerializeField] private BlockDeScription Bedrock;
     [SerializeField] private BlockDeScription Brick;
 
-    [SerializeReference] private int width = 22;
+   
     [SerializeReference] private float spawnProbability = 0.5f;
-    [SerializeReference] private int height = 12;
+    
     private List<Vector3> validCoordinates;
     private BlockBehaviour[,] mapInfo;
     
-    private void Start()
+    private int width;
+    private int height;
+    
+    public BlockBehaviour[,] GenerateMap(int width, int height)
     {
-        GenerateMap();
-      
-    }
-
-    public void GenerateMap(){
+        this.width = width;
+        this.height = height;
+        
         mapInfo = new BlockBehaviour[width, height];
-         Vector3[,] coordinates = SpawnBrick();
+        Vector3[,] coordinates = SpawnBrick();
         List<Vector3> excludedCoordinates = CreateExcludedCoordinatesList();
         List<Vector3> validCoordinates1 = GenerateUnBreakWall(coordinates, excludedCoordinates);
         GenerateBricks(coordinates, excludedCoordinates, validCoordinates1);
+
+        return mapInfo;
     }
         //Спавн гравців
     private List<Vector3> CreateExcludedCoordinatesList()
@@ -81,7 +84,7 @@ public class SpawnMap : MonoBehaviour
                 }
 
 
-                InstantiateBlock(new Vector3(i, z, 0f), Bedrock,Vector2.zero,true);
+                InstantiateBlock(new Vector3(i, z, 0f), Bedrock,new Vector2(-1,-1),true);
             }
         }
     }
@@ -166,10 +169,10 @@ public class SpawnMap : MonoBehaviour
         }
     }
 
-    private void InstantiateBlock(Vector3 position, BlockDeScription description,Vector2  cordination, bool isFrame = false)
+    private void InstantiateBlock(Vector3 position, BlockDeScription description,Vector2 cordination, bool isFrame = false)
     {
         GameObject obj = Instantiate(BlockPrefab.gameObject, position, Quaternion.identity);
-        obj.GetComponent<BlockBehaviour>().InitializeBlock(description);
+        obj.GetComponent<BlockBehaviour>().InitializeBlock(description, cordination);
         obj.transform.SetParent(this.transform);
         
 

@@ -9,6 +9,8 @@ public class UnitBehaviour : MonoBehaviour
     
     public UnitControlBehaviour unitControlBehaviour;
 
+    private Vector2 unitPositionOnMap;
+    
     private void OnEnable()
     {
         unitControlBehaviour.OnAction += UnitActions;
@@ -38,6 +40,28 @@ public class UnitBehaviour : MonoBehaviour
             case InputManager.PlayerAction.bomb:
                 //BOMB
                 break;
+        }
+    }
+
+    private void Update()
+    {
+        FindPositionOnMap();
+    }
+
+    void FindPositionOnMap()
+    {
+        var map = MapManager.Instance.GetMap();
+        float minDistance = Mathf.Infinity;
+
+        foreach (var obj in map)
+        {
+            float distance = Vector2.Distance(this.transform.position, obj.transform.position);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                unitPositionOnMap = obj.coordinates;
+            }
         }
     }
 }
