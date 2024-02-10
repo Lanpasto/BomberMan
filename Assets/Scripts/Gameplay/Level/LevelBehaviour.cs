@@ -9,9 +9,14 @@ public class LevelBehaviour : MonoBehaviour
 
     private void Start()
     {
-        var unit = Instantiate(playerTestDescription.UnitBehaviour);
-        
-        foreach (var statAttribute in playerTestDescription.UnitStatsAttributes.StatAttributes)
+        SpawnPlayer(playerTestDescription);
+    }
+
+    private void SpawnPlayer(UnitDescriptionSO unitDescription)
+    {
+        var unit = Instantiate(unitDescription.UnitBehaviour);
+        unit.GetComponent<UnitBehaviour>().unitControlBehaviour.PlayerInputKeys = unitDescription.PlayerInput;
+        foreach (var statAttribute in unitDescription.UnitStatsAttributes.StatAttributes)
         {
             unit.AddStat(statAttribute);
         }

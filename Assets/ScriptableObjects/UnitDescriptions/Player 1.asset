@@ -17,3 +17,4 @@ MonoBehaviour:
     - statDescription: {fileID: 11400000, guid: 6ac1b1f17b157c64f97222da54dd2ea7, type: 2}
       Value: 10
   UnitBehaviour: {fileID: 2334149593216839077, guid: 52a328f4630beb441b958f02b249b798, type: 3}
+  PlayerInput: {fileID: 11400000, guid: 054ac3c666e15524094dbd771bc1a672, type: 2}

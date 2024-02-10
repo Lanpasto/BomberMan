@@ -7,4 +7,5 @@ public class UnitDescriptionSO : ScriptableObject
 {
     public Stats UnitStatsAttributes;
     public UnitBehaviour UnitBehaviour;
+    public PlayerInputSO PlayerInput;
 }
