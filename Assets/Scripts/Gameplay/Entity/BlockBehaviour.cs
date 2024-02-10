@@ -6,17 +6,25 @@ using UnityEngine;
 
 public class BlockBehaviour : MonoBehaviour
 {
-    [HideInInspector] 
-    public Vector2 coordinates;
+    public Vector2 coordinates { get; set; }
     
-    public bool breakeable;
-    public void InitializeBlock(BlockDeScription description, Vector2 coordinates)
+    public bool breakeable { get; set; }
+    public string nameID { get; set; }
+    protected BoxCollider2D Collider2D { get; set; }
+
+    private void Awake()
+    {
+        Collider2D = GetComponent<BoxCollider2D>();
+    }
+
+    public virtual void Initialize(BlockDeScription description, Vector2 coordinates)
     {
         this.coordinates = coordinates;
-        GetComponent<BoxCollider2D>().enabled = description.HasCollider2D;
+        Collider2D.enabled = description.HasCollider2D;
         GetComponent<SpriteRenderer>().sprite = description.sprite;
         this.gameObject.isStatic = description._static;
         this.name = description.nameBlock;
+        this.nameID = description.nameBlock;
     }
 
 }

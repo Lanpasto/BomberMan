@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SpawnMap : MonoBehaviour
 {
@@ -14,22 +16,42 @@ public class SpawnMap : MonoBehaviour
     
     private List<Vector3> validCoordinates;
     private BlockBehaviour[,] mapInfo;
+    private BlockBehaviour[,] EmptyBlockInfo;
     
     private int width;
     private int height;
     
-    public BlockBehaviour[,] GenerateMap(int width, int height)
+    public class MapPartsInfo
+    {
+        public BlockBehaviour[,] MapInfo;
+        public BlockBehaviour[,] EmptyBlockInfo;
+
+        public MapPartsInfo(BlockBehaviour[,] mapInfo,BlockBehaviour[,] emptyBlockInfo, int height , int width)
+        {
+            this.EmptyBlockInfo = new BlockBehaviour[width, height];
+            this.MapInfo = new BlockBehaviour[width, height];
+
+            EmptyBlockInfo = emptyBlockInfo;
+            MapInfo = mapInfo;
+        }
+    }
+    
+    public MapPartsInfo GenerateMap(int width, int height)
     {
         this.width = width;
         this.height = height;
-        
+
+        EmptyBlockInfo = new BlockBehaviour[width, height];
         mapInfo = new BlockBehaviour[width, height];
+        
         Vector3[,] coordinates = SpawnBrick();
         List<Vector3> excludedCoordinates = CreateExcludedCoordinatesList();
         List<Vector3> validCoordinates1 = GenerateUnBreakWall(coordinates, excludedCoordinates);
         GenerateBricks(coordinates, excludedCoordinates, validCoordinates1);
 
-        return mapInfo;
+        MapPartsInfo newMap = new MapPartsInfo(mapInfo, EmptyBlockInfo,height,width);
+        
+        return newMap;
     }
         //Спавн гравців
     private List<Vector3> CreateExcludedCoordinatesList()
@@ -46,7 +68,7 @@ public class SpawnMap : MonoBehaviour
 
     }
    private Vector3[,] SpawnBrick()
-{
+   {
     Vector3[,] coordinates = new Vector3[width, height];
     List<Vector3> excludedCoordinates = CreateExcludedCoordinatesList();
     List<Vector3> validCoordinates1 = GenerateUnBreakWall1(coordinates, excludedCoordinates);
@@ -60,15 +82,16 @@ public class SpawnMap : MonoBehaviour
             {
                 coordinates[i, z] = currentCoordinate;
                 InstantiateBlock(coordinates[i, z], EmptyBlock,new Vector2(i,z));
+                
             }
                        // Debug.Log("Coordinate at (" + i + ", " + z + "): " + coordinates[i, z]);
 
-        }
+        }   
     }
 
     CreateFrame(coordinates);
     return coordinates;
-}
+   }
 
     //Рамка довкола
     private void CreateFrame(Vector3[,] coordinates)
@@ -172,13 +195,17 @@ public class SpawnMap : MonoBehaviour
     private void InstantiateBlock(Vector3 position, BlockDeScription description,Vector2 cordination, bool isFrame = false)
     {
         GameObject obj = Instantiate(BlockPrefab.gameObject, position, Quaternion.identity);
-        obj.GetComponent<BlockBehaviour>().InitializeBlock(description, cordination);
+        obj.GetComponent<BlockBehaviour>().Initialize(description, cordination);
         obj.transform.SetParent(this.transform);
         
 
         if (!isFrame)
         {
-            mapInfo[Mathf.CeilToInt(cordination.x), Mathf.CeilToInt(cordination.y)] = obj.GetComponent<BlockBehaviour>();
+            mapInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<BlockBehaviour>();
+            if (description == EmptyBlock)
+            {
+                EmptyBlockInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<BlockBehaviour>();
+            }
         }
     }
    private Vector2 FindCoordinateIndices(Vector3 coordinate,Vector3[,] coordinates )

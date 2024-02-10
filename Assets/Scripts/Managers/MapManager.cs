@@ -12,12 +12,15 @@ public class MapManager : MonoBehaviour
     }
 
     private BlockBehaviour[,] mapInfo;
+    private BlockBehaviour[,] emptyBlockInfo;
 
-    public void SetMap(BlockBehaviour[,] generatedMap)
+    public void SetMap(SpawnMap.MapPartsInfo generatedMap)
     {
-
-        mapInfo = new BlockBehaviour[generatedMap.GetLength(0), generatedMap.GetLength(1)];
-        mapInfo = generatedMap;
+        mapInfo = new BlockBehaviour[generatedMap.MapInfo.GetLength(0), generatedMap.MapInfo.GetLength(1)];
+        mapInfo = generatedMap.MapInfo;
+        
+        emptyBlockInfo = new BlockBehaviour[generatedMap.EmptyBlockInfo.GetLength(0), generatedMap.EmptyBlockInfo.GetLength(1)];
+        emptyBlockInfo = generatedMap.EmptyBlockInfo;
     }
 
     public BlockBehaviour[,] GetMap()
@@ -25,9 +28,19 @@ public class MapManager : MonoBehaviour
         return mapInfo;
     }
 
-    public void ChangeMap()
+    public void RegisterNewBlock(BlockBehaviour blockBehaviour)
     {
-        
+        mapInfo[(int)blockBehaviour.coordinates.x, (int)blockBehaviour.coordinates.y] = blockBehaviour;
+    }
+
+    public void UnRegisterBlock(Vector2 coordinates)
+    {
+        mapInfo[(int)coordinates.x, (int)coordinates.y] = emptyBlockInfo[(int)coordinates.x, (int)coordinates.y];
+    }
+
+    public BlockBehaviour GetBlockBehaviour(Vector2 coordinates)
+    {
+        return mapInfo[(int)coordinates.x, (int)coordinates.y];
     }
 
 

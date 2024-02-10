@@ -15,9 +15,7 @@ public class LevelBehaviour : MonoBehaviour
     {
         mapGenerator = GetComponentInChildren<SpawnMap>();
         
-        if(MapManager.Instance == null) {Debug.Log("SYKA");}
         MapManager.Instance.SetMap(mapGenerator.GenerateMap(LevelPropetries.width, LevelPropetries.height));
-        
         
         
         SpawnPlayer(playerTestDescription);

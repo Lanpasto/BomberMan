@@ -5,8 +5,10 @@ using UnityEngine;
 public class UnitAttackBehavior : MonoBehaviour
 {
     [SerializeField] private GameObject bomb;
-    private UnitBehaviour unit;
-
+    [SerializeField] private BlockDeScription bombDescription;
+    
+ 
+    public UnitBehaviour unit { get; set; }
     private StatAttribute bombAmount => unit.GetStat("Bomb Amount");
     
       private void OnEnable()
@@ -25,16 +27,41 @@ public class UnitAttackBehavior : MonoBehaviour
        
         if (action == InputManager.PlayerAction.bomb)
         {
-            DeployBomb(unit.GeUnitPositionOnMap());
+            StartCoroutine(DeployBomb());
         
         }
     }
 
-    private void DeployBomb(Vector2 position)
+    private int currentBombCount = 0;
+
+    private IEnumerator DeployBomb()
     {
-        Instantiate(bomb, unit.GeUnitPositionOnMap(), Quaternion.identity);
-        unit.GeUnitPositionOnMap();
-        Debug.Log("Sykasss3 " + unit.GeUnitPositionOnMap());
+        var coordinates = unit.GeUnitPositionOnMap();
+        yield return new WaitForSeconds(0.2f);
+        
+        if (currentBombCount < bombAmount.Value)
+        {
+            if (MapManager.Instance.GetBlockBehaviour(coordinates).name != bombDescription.nameBlock)
+            {
+                GameObject _bomb = Instantiate(bomb,coordinates , Quaternion.identity);
+                var bombBehaviour = _bomb.GetComponent<BombBehaviour>();
+                bombBehaviour.SetSourceAttackBehaviour(this);
+                bombBehaviour.Initialize(bombDescription, coordinates);
+                bombBehaviour.OnExplode += OnBombExplode;
+                currentBombCount++;
+
+                bombBehaviour.StartBombBehaviour();
+                
+                MapManager.Instance.RegisterNewBlock(bombBehaviour);
+            }
+        }
+
+        yield return null;
     }
 
+    private void OnBombExplode(BlockBehaviour blockBehaviour)
+    {
+        MapManager.Instance.UnRegisterBlock(blockBehaviour.coordinates);
+        currentBombCount--;
+    }
 }
