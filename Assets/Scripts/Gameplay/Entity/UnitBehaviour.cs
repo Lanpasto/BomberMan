@@ -39,19 +39,42 @@ public class UnitBehaviour : EntityBehaviour
     
     private void FindPositionOnMap()
     {
+
+        
         var map = MapManager.Instance.GetMap();
         float minDistance = Mathf.Infinity;
         
+        MapUnit closestPointObject = new MapUnit();
         foreach (var obj in map)
         {
-            float distance = Vector2.Distance(this.transform.position, obj.GetTransform());
-            
+            //Debug.Log(obj);
+            float distance = 0f;
+            if (!obj.Contains(this.entityDescription))
+            {
+                distance = Vector2.Distance(this.transform.position, obj.GetTransform());
+            }
+            else
+            {
+                distance = Vector2.Distance(this.transform.position, obj.GetCoordinates());
+            }
+           
             if (distance < minDistance)
             {
-                this.coordinates = obj.GetCoordinates();
+                minDistance = distance;
+                closestPointObject = obj;
             }
-
         }
+        
+        if (!closestPointObject.Contains(this.entityDescription))
+        {
+            MapManager.Instance.UnRegisterBlock(this);
+            this.coordinates = closestPointObject.GetCoordinates();
+            MapManager.Instance.RegisterNewBlock(this);
+        }
+        
+        
+        
+        
        
     }
 }
