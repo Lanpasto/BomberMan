@@ -19,3 +19,8 @@ MonoBehaviour:
     - statDescription: {fileID: 11400000, guid: 3a8be89620d23a243b685e6b3eae4ca0, type: 2}
       Value: 110
   UnitBehaviour: {fileID: 2334149593216839077, guid: 52a328f4630beb441b958f02b249b798, type: 3}
+<<<<<<< Updated upstream
+=======
+  PlayerInput: {fileID: 11400000, guid: 054ac3c666e15524094dbd771bc1a672, type: 2}
+  EntityDescription: {fileID: 11400000, guid: b6e49c99206bba94495b4264b2dca722, type: 2}
+>>>>>>> Stashed changes

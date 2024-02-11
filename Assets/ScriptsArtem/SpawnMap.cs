@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+<<<<<<< Updated upstream:Assets/ScriptsArtem/SpawnMap.cs
 
 public class SpawnMap : MonoBehaviour
 {
@@ -8,22 +9,59 @@ public class SpawnMap : MonoBehaviour
     [SerializeField] private BlockDeScription EmptyBlock;
     [SerializeField] private BlockDeScription Bedrock;
     [SerializeField] private BlockDeScription Brick;
+=======
+using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
+
+public class SpawnMap : MonoBehaviour
+{
+    [SerializeField] private PlaceableEntityBehaviour placeableEntityPrefab;
+    [SerializeField] private EntityDescription EmptyBlock;
+    [SerializeField] private EntityDescription Bedrock;
+    [SerializeField] private EntityDescription Brick;
+>>>>>>> Stashed changes:Assets/Scripts/Managers/SpawnMap.cs
 
     [SerializeReference] private int width = 22;
     [SerializeReference] private float spawnProbability = 0.5f;
     [SerializeReference] private int height = 12;
     private List<Vector3> validCoordinates;
+<<<<<<< Updated upstream:Assets/ScriptsArtem/SpawnMap.cs
     private BlockBehaviour[,] mapInfo;
+=======
+    private EntityBehaviour[,] mapInfo;
+    private EntityBehaviour[,] EmptyBlockInfo;
+>>>>>>> Stashed changes:Assets/Scripts/Managers/SpawnMap.cs
     
     private void Start()
     {
+<<<<<<< Updated upstream:Assets/ScriptsArtem/SpawnMap.cs
         GenerateMap();
       
+=======
+        public EntityBehaviour[,] MapInfo;
+        public EntityBehaviour[,] EmptyBlockInfo;
+
+        public MapPartsInfo(EntityBehaviour[,] mapInfo,EntityBehaviour[,] emptyBlockInfo, int height , int width)
+        {
+            this.EmptyBlockInfo = new EntityBehaviour[width, height];
+            this.MapInfo = new EntityBehaviour[width, height];
+
+            EmptyBlockInfo = emptyBlockInfo;
+            MapInfo = mapInfo;
+        }
+>>>>>>> Stashed changes:Assets/Scripts/Managers/SpawnMap.cs
     }
 
+<<<<<<< Updated upstream:Assets/ScriptsArtem/SpawnMap.cs
     public void GenerateMap(){
         mapInfo = new BlockBehaviour[width, height];
          Vector3[,] coordinates = SpawnBrick();
+=======
+        EmptyBlockInfo = new EntityBehaviour[width, height];
+        mapInfo = new EntityBehaviour[width, height];
+        
+        Vector3[,] coordinates = SpawnBrick();
+>>>>>>> Stashed changes:Assets/Scripts/Managers/SpawnMap.cs
         List<Vector3> excludedCoordinates = CreateExcludedCoordinatesList();
         List<Vector3> validCoordinates1 = GenerateUnBreakWall(coordinates, excludedCoordinates);
         GenerateBricks(coordinates, excludedCoordinates, validCoordinates1);
@@ -153,7 +191,11 @@ public class SpawnMap : MonoBehaviour
         }
     }
     //Рандомайзер    
+<<<<<<< Updated upstream:Assets/ScriptsArtem/SpawnMap.cs
     private void RandomInstantiateObject(Vector3 coordinate, BlockDeScription objectToInstantiate,
+=======
+    private void RandomInstantiateObject(Vector3 coordinate, EntityDescription objectToInstantiate,
+>>>>>>> Stashed changes:Assets/Scripts/Managers/SpawnMap.cs
      float spawnProbability,Vector3[,] coordinates )
     {
 
@@ -166,16 +208,31 @@ public class SpawnMap : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream:Assets/ScriptsArtem/SpawnMap.cs
     private void InstantiateBlock(Vector3 position, BlockDeScription description,Vector2  cordination, bool isFrame = false)
     {
         GameObject obj = Instantiate(BlockPrefab.gameObject, position, Quaternion.identity);
         obj.GetComponent<BlockBehaviour>().InitializeBlock(description);
+=======
+    private void InstantiateBlock(Vector3 position, EntityDescription description,Vector2 cordination, bool isFrame = false)
+    {
+        GameObject obj = Instantiate(placeableEntityPrefab.gameObject, position, Quaternion.identity);
+        obj.GetComponent<EntityBehaviour>().Initialize(description, cordination);
+>>>>>>> Stashed changes:Assets/Scripts/Managers/SpawnMap.cs
         obj.transform.SetParent(this.transform);
         
 
         if (!isFrame)
         {
+<<<<<<< Updated upstream:Assets/ScriptsArtem/SpawnMap.cs
             mapInfo[Mathf.CeilToInt(cordination.x), Mathf.CeilToInt(cordination.y)] = obj.GetComponent<BlockBehaviour>();
+=======
+            mapInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
+            if (description == EmptyBlock)
+            {
+                EmptyBlockInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
+            }
+>>>>>>> Stashed changes:Assets/Scripts/Managers/SpawnMap.cs
         }
     }
    private Vector2 FindCoordinateIndices(Vector3 coordinate,Vector3[,] coordinates )

@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitBehaviour : MonoBehaviour
+public class UnitBehaviour : EntityBehaviour
 {
     public RuntimeStatAttributeContainer RuntimeStatAttributeContainer;
     
     public UnitControlBehaviour unitControlBehaviour;
 
+<<<<<<< Updated upstream
     private void OnEnable()
     {
         unitControlBehaviour.OnAction += UnitActions;
@@ -18,6 +19,9 @@ public class UnitBehaviour : MonoBehaviour
     {
         unitControlBehaviour.OnAction -= UnitActions;
     }
+=======
+    public UnitDescriptionSO UnitDescription { get; set; }
+>>>>>>> Stashed changes
 
     public StatAttribute GetStat(string id)
     {
@@ -29,16 +33,68 @@ public class UnitBehaviour : MonoBehaviour
         this.RuntimeStatAttributeContainer.Stats.StatAttributes.Add(statAttribute);
     }
 
+<<<<<<< Updated upstream
     
+=======
+    public override void Initialize(EntityDescription description, Vector2 coordinates)
+    {
+        base.Initialize(description, coordinates);
+        transform.position = MapManager.Instance.GetPositionByCoordinates(coordinates);
+        unitControlBehaviour.PlayerInputKeys = UnitDescription.PlayerInput;
+        foreach (var statAttribute in UnitDescription.UnitStatsAttributes.StatAttributes)
+        {
+            AddStat(statAttribute);
+        }
+    }
+    
+    private void Update()
+    {
+        FindPositionOnMap();
+    }
+>>>>>>> Stashed changes
 
     private void UnitActions(InputManager.PlayerAction action)
     {
+<<<<<<< Updated upstream
         switch (action)
         {
             case InputManager.PlayerAction.bomb:
                 //BOMB
                 break;
+=======
+        var map = MapManager.Instance.GetMap();
+        float minDistance = Mathf.Infinity;
+        
+        EntityBehaviour closestPointObject = null;
+        foreach (var obj in map)
+        {
+           //Debug.Log(obj);
+            float distance = 0f;
+            if (obj.entityDescription != this.entityDescription)
+            {
+                distance = Vector2.Distance(this.transform.position, obj.transform.position);
+            }
+            else
+            {
+                distance = Vector2.Distance(this.transform.position, obj.coordinates);
+            }
+           
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestPointObject = obj;
+            }
+>>>>>>> Stashed changes
         }
+        
+        if (closestPointObject.entityDescription != entityDescription)
+        {
+            MapManager.Instance.UnRegisterBlock(this.coordinates);
+            //Debug.Log("CURRENT CORD " + coordinates + " new cords " + closestCoordinates);
+            this.coordinates = closestPointObject.coordinates;
+            MapManager.Instance.RegisterNewBlock(this);
+        }
+       
     }
 }
 
