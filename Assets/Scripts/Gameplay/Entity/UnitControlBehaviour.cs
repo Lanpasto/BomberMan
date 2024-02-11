@@ -8,12 +8,13 @@ public class UnitControlBehaviour : MonoBehaviour
 {
     public Action<InputManager.PlayerAction> OnAction;
     
-    [HideInInspector]
     public PlayerInputSO PlayerInputKeys;
     
     public UnitBehaviour unitBehaviour;
 
     private Rigidbody2D rb;
+
+    private Vector2 positionToFollow;
     private StatAttribute Speed => unitBehaviour.GetStat("Speed");
     
     private void OnEnable()
@@ -77,6 +78,7 @@ public class UnitControlBehaviour : MonoBehaviour
             rb.AddForce(force, ForceMode2D.Impulse);
             float maxVelocity = 2f * Speed.Value;
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxVelocity);
+            positionToFollow = rb.position;
         }
     }
 

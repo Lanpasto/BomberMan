@@ -98,9 +98,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ab1cc917b691c74c9c1d2fc06cae4b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates: {x: 0, y: 0}
-  breakeable: 0
-  nameID: 
 --- !u!61 &4044237172070615094
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -108,7 +105,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453708588592400506}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -144,5 +141,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.67, y: 0.67}
-  m_EdgeRadius: 0.15
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
