@@ -31,6 +31,6 @@ public class PlaceableEntityBehaviour : EntityBehaviour
     private void OnDestroy()
     {
         if(MapManager.Instance != null)
-            MapManager.Instance.UnRegisterBlock(coordinates);
+            MapManager.Instance.UnRegisterBlock(this);
     }
 }

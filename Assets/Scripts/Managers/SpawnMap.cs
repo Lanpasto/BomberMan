@@ -17,42 +17,35 @@ public class SpawnMap : MonoBehaviour
     [SerializeReference] private float spawnProbability = 0.5f;
 
     private List<Vector3> validCoordinates;
-    private EntityBehaviour[,] mapInfo;
-    private EntityBehaviour[,] EmptyBlockInfo;
+    private MapUnit[,] newMap;
 
     private int width;
     private int height;
     private int countOfPlayer;
 
-    public class MapPartsInfo
-    {
-        public EntityBehaviour[,] MapInfo;
-        public EntityBehaviour[,] EmptyBlockInfo;
+  
 
-        public MapPartsInfo(EntityBehaviour[,] mapInfo, EntityBehaviour[,] emptyBlockInfo, int height, int width)
-        {
-            this.EmptyBlockInfo = new EntityBehaviour[width, height];
-            this.MapInfo = new EntityBehaviour[width, height];
-
-            EmptyBlockInfo = emptyBlockInfo;
-            MapInfo = mapInfo;
-        }
-    }
-
-    public MapPartsInfo GenerateMap(int width, int height, int countOfPlayer)
+    public MapUnit[,] GenerateMap(int width, int height, int countOfPlayer)
     {
         this.width = width;
         this.height = height;
         this.countOfPlayer = countOfPlayer;
 
-        EmptyBlockInfo = new EntityBehaviour[width, height];
-        mapInfo = new EntityBehaviour[width, height];
+        newMap = new MapUnit[width, height];
+        
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                newMap[x, y] = new MapUnit();
+            }
+        }
+        
         List<Vector3> spawnCoordinatesException = CreateSpawnCoordinatesExceptionList(countOfPlayer);
         Vector3[,] coordinatesOfMap = GenerateEmptyBlock(spawnCoordinatesException);
         List<Vector3> unbreakableWallCoordinatesException = GenerateUnBreakWall(coordinatesOfMap, spawnCoordinatesException);
         GenerateBricks(coordinatesOfMap, spawnCoordinatesException, unbreakableWallCoordinatesException);
-
-        MapPartsInfo newMap = new MapPartsInfo(mapInfo, EmptyBlockInfo, height, width);
+        
 
         return newMap;
     }
@@ -289,11 +282,7 @@ public class SpawnMap : MonoBehaviour
 
         if (!isFrame)
         {
-            mapInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
-            if (description == EmptyBlock)
-            {
-                EmptyBlockInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
-            }
+            newMap[(int)cordination.x, (int)cordination.y].Add(obj.GetComponent<EntityBehaviour>());
         }
     }
     private Vector2 FindCoordinateIndices(Vector3 coordinate, Vector3[,] coordinates)
@@ -312,18 +301,5 @@ public class SpawnMap : MonoBehaviour
 
         return Vector2.zero;
     }
-    private void PrintMassive()
-    {
-        for (int coordinateX = 0; coordinateX < width; coordinateX++)
-        {
-            string rowString = "";
-
-            for (int coordinateY = 0; coordinateY < height; coordinateY++)
-            {
-                rowString += "[" + coordinateX + "," + coordinateY + "]: " + mapInfo[coordinateX, coordinateY].ToString() + "  ";
-            }
-
-            Debug.Log(rowString);
-        }
-    }
+   
 }

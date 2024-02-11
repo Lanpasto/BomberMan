@@ -48,7 +48,7 @@ public class UnitAttackBehavior : MonoBehaviour
         {
             timeElapsed = Time.time - lastLaunchTime;
 
-            if (MapManager.Instance.GetBlockBehaviour(coordinates).entityDescription != bombDescription && timeElapsed > deployCoolDown)
+            if (!MapManager.Instance.GetBlockBehaviour(coordinates).Contains(bombDescription) && timeElapsed > deployCoolDown)
             {
                 lastLaunchTime = Time.time;
 
@@ -70,7 +70,7 @@ public class UnitAttackBehavior : MonoBehaviour
 
     private void OnBombExplode(PlaceableEntityBehaviour placeableEntityBehaviour)
     {
-        MapManager.Instance.UnRegisterBlock(placeableEntityBehaviour.coordinates);
+        MapManager.Instance.UnRegisterBlock(placeableEntityBehaviour);
         currentBombCount--;
     }
 }

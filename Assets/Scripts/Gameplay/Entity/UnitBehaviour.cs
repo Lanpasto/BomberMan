@@ -11,16 +11,6 @@ public class UnitBehaviour : EntityBehaviour
     
     public UnitDescriptionSO UnitDescription { get; set; }
     
-    private void OnEnable()
-    {
-        unitControlBehaviour.OnAction += UnitActions;
-    }
-    
-    private void OnDisable()
-    {
-        unitControlBehaviour.OnAction -= UnitActions;
-    }
-
     public StatAttribute GetStat(string id)
     {
         return this.RuntimeStatAttributeContainer.Stats.GetStartAttributeById(id, this);
@@ -46,50 +36,21 @@ public class UnitBehaviour : EntityBehaviour
     {
         FindPositionOnMap();
     }
-
-    private void UnitActions(InputManager.PlayerAction action)
+    
+    private void FindPositionOnMap()
     {
-
-        switch (action)
-        {
-            case InputManager.PlayerAction.bomb:
-                //BOMB
-                break;
-        }
-
-    }
-    private void FindPositionOnMap(){
         var map = MapManager.Instance.GetMap();
         float minDistance = Mathf.Infinity;
         
-        EntityBehaviour closestPointObject = null;
         foreach (var obj in map)
         {
-           //Debug.Log(obj);
-            float distance = 0f;
-            if (obj.entityDescription != this.entityDescription)
-            {
-                distance = Vector2.Distance(this.transform.position, obj.transform.position);
-            }
-            else
-            {
-                distance = Vector2.Distance(this.transform.position, obj.coordinates);
-            }
+            float distance = Vector2.Distance(this.transform.position, obj.GetTransform());
             
             if (distance < minDistance)
             {
-                minDistance = distance;
-                closestPointObject = obj;
+                this.coordinates = obj.GetCoordinates();
             }
-            
-        }
-        
-        if (closestPointObject.entityDescription != entityDescription)
-        {
-            MapManager.Instance.UnRegisterBlock(this.coordinates);
-            //Debug.Log("CURRENT CORD " + coordinates + " new cords " + closestCoordinates);
-            this.coordinates = closestPointObject.coordinates;
-            MapManager.Instance.RegisterNewBlock(this);
+
         }
        
     }
