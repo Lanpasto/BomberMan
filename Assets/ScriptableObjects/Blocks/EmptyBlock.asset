@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: EmptyBlock
   m_EditorClassIdentifier: 
   nameBlock: EmptyBlock
-  IsBreakable: 0
+  CanBeDamaged: 0
   sprite: {fileID: 7482667652216324306, guid: 1191ec89845a08642acd39ea85d9e343, type: 3}
   HasCollider2D: 0
   _static: 1
+  sortOrder: -1

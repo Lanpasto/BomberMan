@@ -23,6 +23,7 @@ public class PlaceableEntityBehaviour : EntityBehaviour
         this.gameObject.isStatic = description._static;
         this.name = description.nameBlock;
         this.nameID = description.nameBlock;
+        GetComponent<SpriteRenderer>().sortingOrder = description.sortOrder;
 
         base.Initialize(description, coordinates);
     }

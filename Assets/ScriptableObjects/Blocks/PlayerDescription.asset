@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c75b162e90bba0349ae2aba0555fc0e1, type: 3}
   m_Name: PlayerDescription
   m_EditorClassIdentifier: 
-  nameBlock: Bedrok
-  IsBreakable: 0
-  sprite: {fileID: 21300000, guid: 185fcfd10f212ef4f9674a73295baf29, type: 3}
-  HasCollider2D: 1
-  _static: 1
+  nameBlock: PLayer
+  CanBeDamaged: 0
+  sprite: {fileID: 0}
+  HasCollider2D: 0
+  _static: 0
+  sortOrder: 0

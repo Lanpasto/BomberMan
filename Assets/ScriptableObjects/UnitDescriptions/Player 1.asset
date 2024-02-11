@@ -20,3 +20,4 @@ MonoBehaviour:
       Value: 4
   UnitBehaviour: {fileID: 2334149593216839077, guid: 52a328f4630beb441b958f02b249b798, type: 3}
   PlayerInput: {fileID: 11400000, guid: 054ac3c666e15524094dbd771bc1a672, type: 2}
+  EntityDescription: {fileID: 11400000, guid: f07edc9f6423b7943af8686bb5355ef4, type: 2}

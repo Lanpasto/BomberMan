@@ -13,5 +13,6 @@ public class EntityDescription : ScriptableObject
     public Sprite sprite;
     public bool HasCollider2D;
     public bool _static;
+    public int sortOrder = 0;
 
 }
