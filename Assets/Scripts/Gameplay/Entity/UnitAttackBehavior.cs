@@ -6,12 +6,12 @@ using UnityEngine;
 public class UnitAttackBehavior : MonoBehaviour
 {
     [SerializeField] private GameObject bomb;
-    [SerializeField] private PlaceableEntityDescription bombDescription;
-    
- 
+    [SerializeField] private EntityDescription bombDescription;
+
+
     public UnitBehaviour unit { get; set; }
     private StatAttribute bombAmount => unit.GetStat("Bomb Amount");
-    
+
       private void OnEnable()
     {
         unit = GetComponent<UnitBehaviour>();
@@ -25,11 +25,11 @@ public class UnitAttackBehavior : MonoBehaviour
     }
     private void UnitActions(InputManager.PlayerAction action)
     {
-       
+
         if (action == InputManager.PlayerAction.bomb)
         {
             StartCoroutine(DeployBomb());
-        
+
         }
     }
 
@@ -37,21 +37,21 @@ public class UnitAttackBehavior : MonoBehaviour
     private float timeElapsed = 0;
     private float lastLaunchTime = -Mathf.Infinity;
     private static float deployCoolDown = .09f;
-    
+
 
     private IEnumerator DeployBomb()
     {
-        var coordinates = unit.GeUnitPositionOnMap();
+        var coordinates = unit.coordinates;
         yield return new WaitForSeconds(0.11f);
-        
+
         if (currentBombCount < bombAmount.Value)
         {
             timeElapsed = Time.time - lastLaunchTime;
 
-            if (MapManager.Instance.GetBlockBehaviour(coordinates).name != bombDescription.nameBlock && timeElapsed > deployCoolDown)
+            if (MapManager.Instance.GetBlockBehaviour(coordinates).entityDescription != bombDescription && timeElapsed > deployCoolDown)
             {
                 lastLaunchTime = Time.time;
-                
+
                 GameObject _bomb = Instantiate(bomb,coordinates , Quaternion.identity);
                 var bombBehaviour = _bomb.GetComponent<BombBehaviour>();
                 bombBehaviour.SetSourceAttackBehaviour(this);
@@ -60,7 +60,7 @@ public class UnitAttackBehavior : MonoBehaviour
                 currentBombCount++;
 
                 bombBehaviour.StartBombBehaviour();
-                
+
                 MapManager.Instance.RegisterNewBlock(bombBehaviour);
             }
         }
@@ -68,9 +68,9 @@ public class UnitAttackBehavior : MonoBehaviour
         yield return null;
     }
 
-    private void OnBombExplode(BlockBehaviour blockBehaviour)
+    private void OnBombExplode(PlaceableEntityBehaviour placeableEntityBehaviour)
     {
-        MapManager.Instance.UnRegisterBlock(blockBehaviour.coordinates);
+        MapManager.Instance.UnRegisterBlock(placeableEntityBehaviour.coordinates);
         currentBombCount--;
     }
 }

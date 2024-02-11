@@ -24,10 +24,7 @@ public class LevelBehaviour : MonoBehaviour
     private void SpawnPlayer(UnitDescriptionSO unitDescription)
     {
         var unit = Instantiate(unitDescription.UnitBehaviour);
-        unit.GetComponent<UnitBehaviour>().unitControlBehaviour.PlayerInputKeys = unitDescription.PlayerInput;
-        foreach (var statAttribute in unitDescription.UnitStatsAttributes.StatAttributes)
-        {
-            unit.AddStat(statAttribute);
-        }
+        unit.UnitDescription = unitDescription;
+        unit.Initialize(unitDescription.EntityDescription, Vector2.zero);
     }
 }

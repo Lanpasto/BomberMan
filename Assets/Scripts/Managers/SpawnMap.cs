@@ -2,21 +2,23 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class SpawnMap : MonoBehaviour
 {
-    [SerializeField] private BlockBehaviour BlockPrefab;
-    [SerializeField] private PlaceableEntityDescription EmptyBlock;
-    [SerializeField] private PlaceableEntityDescription Bedrock;
-    [SerializeField] private PlaceableEntityDescription Brick;
+    [FormerlySerializedAs("BlockPrefab")] 
+    [SerializeField] private PlaceableEntityBehaviour placeableEntityPrefab;
+    [SerializeField] private EntityDescription EmptyBlock;
+    [SerializeField] private EntityDescription Bedrock;
+    [SerializeField] private EntityDescription Brick;
 
 
     [SerializeReference] private float spawnProbability = 0.5f;
 
     private List<Vector3> validCoordinates;
-    private BlockBehaviour[,] mapInfo;
-    private BlockBehaviour[,] EmptyBlockInfo;
+    private EntityBehaviour[,] mapInfo;
+    private EntityBehaviour[,] EmptyBlockInfo;
 
     private int width;
     private int height;
@@ -24,13 +26,13 @@ public class SpawnMap : MonoBehaviour
 
     public class MapPartsInfo
     {
-        public BlockBehaviour[,] MapInfo;
-        public BlockBehaviour[,] EmptyBlockInfo;
+        public EntityBehaviour[,] MapInfo;
+        public EntityBehaviour[,] EmptyBlockInfo;
 
-        public MapPartsInfo(BlockBehaviour[,] mapInfo, BlockBehaviour[,] emptyBlockInfo, int height, int width)
+        public MapPartsInfo(EntityBehaviour[,] mapInfo, EntityBehaviour[,] emptyBlockInfo, int height, int width)
         {
-            this.EmptyBlockInfo = new BlockBehaviour[width, height];
-            this.MapInfo = new BlockBehaviour[width, height];
+            this.EmptyBlockInfo = new EntityBehaviour[width, height];
+            this.MapInfo = new EntityBehaviour[width, height];
 
             EmptyBlockInfo = emptyBlockInfo;
             MapInfo = mapInfo;
@@ -43,8 +45,8 @@ public class SpawnMap : MonoBehaviour
         this.height = height;
         this.countOfPlayer = countOfPlayer;
 
-        EmptyBlockInfo = new BlockBehaviour[width, height];
-        mapInfo = new BlockBehaviour[width, height];
+        EmptyBlockInfo = new EntityBehaviour[width, height];
+        mapInfo = new EntityBehaviour[width, height];
         List<Vector3> spawnCoordinatesException = CreateSpawnCoordinatesExceptionList(countOfPlayer);
         Vector3[,] coordinatesOfMap = GenerateEmptyBlock(spawnCoordinatesException);
         List<Vector3> unbreakableWallCoordinatesException = GenerateUnBreakWall(coordinatesOfMap, spawnCoordinatesException);
@@ -265,7 +267,7 @@ public class SpawnMap : MonoBehaviour
         }
     }
     //Рандомайзер    
-    private void RandomInstantiateObject(Vector3 coordinatesOfMap, PlaceableEntityDescription objectToInstantiate,
+    private void RandomInstantiateObject(Vector3 coordinatesOfMap, EntityDescription objectToInstantiate,
      float spawnProbability, Vector3[,] coordinates)
     {
 
@@ -278,19 +280,19 @@ public class SpawnMap : MonoBehaviour
         }
     }
 
-    private void InstantiateBlock(Vector3 position, PlaceableEntityDescription description, Vector2 cordination, bool isFrame = false)
+    private void InstantiateBlock(Vector3 position, EntityDescription description, Vector2 cordination, bool isFrame = false)
     {
-        GameObject obj = Instantiate(BlockPrefab.gameObject, position, Quaternion.identity);
-        obj.GetComponent<BlockBehaviour>().Initialize(description, cordination);
+        GameObject obj = Instantiate(placeableEntityPrefab.gameObject, position, Quaternion.identity);
+        obj.GetComponent<PlaceableEntityBehaviour>().Initialize(description, cordination);
         obj.transform.SetParent(this.transform);
 
 
         if (!isFrame)
         {
-            mapInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<BlockBehaviour>();
+            mapInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
             if (description == EmptyBlock)
             {
-                EmptyBlockInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<BlockBehaviour>();
+                EmptyBlockInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
             }
         }
     }
