@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3797aaf9d358c2a49bb6db98448f28f9, type: 3}
-  m_Name: SA Speed
+  m_Script: {fileID: 11500000, guid: c75b162e90bba0349ae2aba0555fc0e1, type: 3}
+  m_Name: Bedrok
   m_EditorClassIdentifier: 
-  Name: Speed
-  Icon: {fileID: 0}
-  DefaultValue: 7.5
+  nameBlock: Bedrok
+  IsBreakable: 0
+  sprite: {fileID: 21300000, guid: 185fcfd10f212ef4f9674a73295baf29, type: 3}
+  HasCollider2D: 1
+  _static: 1

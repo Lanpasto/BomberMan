@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3797aaf9d358c2a49bb6db98448f28f9, type: 3}
-  m_Name: SA Speed
+  m_Script: {fileID: 11500000, guid: 7176a8a70914c4c40a56f6f244762b6b, type: 3}
+  m_Name: LevelProps
   m_EditorClassIdentifier: 
-  Name: Speed
-  Icon: {fileID: 0}
-  DefaultValue: 7.5
+  width: 13
+  height: 15
