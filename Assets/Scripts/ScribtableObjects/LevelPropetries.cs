@@ -7,4 +7,5 @@ public class LevelPropetries : ScriptableObject
 {
     public int width;
     public int height;
+    public int countOfPlayer;
 }
