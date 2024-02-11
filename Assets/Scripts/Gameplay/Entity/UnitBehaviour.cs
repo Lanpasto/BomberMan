@@ -8,8 +8,7 @@ public class UnitBehaviour : EntityBehaviour
     public RuntimeStatAttributeContainer RuntimeStatAttributeContainer;
     
     public UnitControlBehaviour unitControlBehaviour;
-
-<<<<<<< Updated upstream
+    
     private void OnEnable()
     {
         unitControlBehaviour.OnAction += UnitActions;
@@ -19,9 +18,8 @@ public class UnitBehaviour : EntityBehaviour
     {
         unitControlBehaviour.OnAction -= UnitActions;
     }
-=======
+
     public UnitDescriptionSO UnitDescription { get; set; }
->>>>>>> Stashed changes
 
     public StatAttribute GetStat(string id)
     {
@@ -33,9 +31,7 @@ public class UnitBehaviour : EntityBehaviour
         this.RuntimeStatAttributeContainer.Stats.StatAttributes.Add(statAttribute);
     }
 
-<<<<<<< Updated upstream
     
-=======
     public override void Initialize(EntityDescription description, Vector2 coordinates)
     {
         base.Initialize(description, coordinates);
@@ -51,18 +47,19 @@ public class UnitBehaviour : EntityBehaviour
     {
         FindPositionOnMap();
     }
->>>>>>> Stashed changes
 
     private void UnitActions(InputManager.PlayerAction action)
     {
-<<<<<<< Updated upstream
         switch (action)
         {
             case InputManager.PlayerAction.bomb:
                 //BOMB
                 break;
-=======
-        var map = MapManager.Instance.GetMap();
+        }
+    }
+    
+    FindPositionOnMap()
+    var map = MapManager.Instance.GetMap();
         float minDistance = Mathf.Infinity;
         
         EntityBehaviour closestPointObject = null;
@@ -84,7 +81,7 @@ public class UnitBehaviour : EntityBehaviour
                 minDistance = distance;
                 closestPointObject = obj;
             }
->>>>>>> Stashed changes
+
         }
         
         if (closestPointObject.entityDescription != entityDescription)
