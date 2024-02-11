@@ -15,7 +15,7 @@ public class BombBehaviour : BlockBehaviour
        this.attackBehavior = attackBehavior;
    }
 
-   public override void Initialize(BlockDeScription description, Vector2 coordinates)
+   public override void Initialize(PlaceableEntityDescription description, Vector2 coordinates)
    {
        base.Initialize(description, coordinates);
        GetComponent<SpriteRenderer>().sortingOrder += 1;

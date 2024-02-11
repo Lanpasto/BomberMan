@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 public class UnitAttackBehavior : MonoBehaviour
 {
     [SerializeField] private GameObject bomb;
-    [SerializeField] private BlockDeScription bombDescription;
+    [SerializeField] private PlaceableEntityDescription bombDescription;
     
  
     public UnitBehaviour unit { get; set; }
@@ -33,16 +34,24 @@ public class UnitAttackBehavior : MonoBehaviour
     }
 
     private int currentBombCount = 0;
+    private float timeElapsed = 0;
+    private float lastLaunchTime = -Mathf.Infinity;
+    private static float deployCoolDown = .09f;
+    
 
     private IEnumerator DeployBomb()
     {
         var coordinates = unit.GeUnitPositionOnMap();
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.11f);
         
         if (currentBombCount < bombAmount.Value)
         {
-            if (MapManager.Instance.GetBlockBehaviour(coordinates).name != bombDescription.nameBlock)
+            timeElapsed = Time.time - lastLaunchTime;
+
+            if (MapManager.Instance.GetBlockBehaviour(coordinates).name != bombDescription.nameBlock && timeElapsed > deployCoolDown)
             {
+                lastLaunchTime = Time.time;
+                
                 GameObject _bomb = Instantiate(bomb,coordinates , Quaternion.identity);
                 var bombBehaviour = _bomb.GetComponent<BombBehaviour>();
                 bombBehaviour.SetSourceAttackBehaviour(this);

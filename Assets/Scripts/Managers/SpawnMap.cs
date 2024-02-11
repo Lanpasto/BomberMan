@@ -7,9 +7,9 @@ using Random = UnityEngine.Random;
 public class SpawnMap : MonoBehaviour
 {
     [SerializeField] private BlockBehaviour BlockPrefab;
-    [SerializeField] private BlockDeScription EmptyBlock;
-    [SerializeField] private BlockDeScription Bedrock;
-    [SerializeField] private BlockDeScription Brick;
+    [SerializeField] private PlaceableEntityDescription EmptyBlock;
+    [SerializeField] private PlaceableEntityDescription Bedrock;
+    [SerializeField] private PlaceableEntityDescription Brick;
 
    
     [SerializeReference] private float spawnProbability = 0.5f;
@@ -179,7 +179,7 @@ public class SpawnMap : MonoBehaviour
         }
     }
     //Рандомайзер    
-    private void RandomInstantiateObject(Vector3 coordinate, BlockDeScription objectToInstantiate,
+    private void RandomInstantiateObject(Vector3 coordinate, PlaceableEntityDescription objectToInstantiate,
      float spawnProbability,Vector3[,] coordinates )
     {
 
@@ -192,7 +192,7 @@ public class SpawnMap : MonoBehaviour
         }
     }
 
-    private void InstantiateBlock(Vector3 position, BlockDeScription description,Vector2 cordination, bool isFrame = false)
+    private void InstantiateBlock(Vector3 position, PlaceableEntityDescription description,Vector2 cordination, bool isFrame = false)
     {
         GameObject obj = Instantiate(BlockPrefab.gameObject, position, Quaternion.identity);
         obj.GetComponent<BlockBehaviour>().Initialize(description, cordination);

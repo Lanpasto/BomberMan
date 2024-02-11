@@ -17,7 +17,7 @@ public class BlockBehaviour : MonoBehaviour
         Collider2D = GetComponent<BoxCollider2D>();
     }
 
-    public virtual void Initialize(BlockDeScription description, Vector2 coordinates)
+    public virtual void Initialize(PlaceableEntityDescription description, Vector2 coordinates)
     {
         this.coordinates = coordinates;
         Collider2D.enabled = description.HasCollider2D;
