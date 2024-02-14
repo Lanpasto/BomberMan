@@ -4,14 +4,7 @@ using UnityEngine;
 
 public class BrickGeneratePattern : MonoBehaviour
 {
-    public enum RandomTypeEnum
-    {   
-        Default,
-        IsOnLine,
-        PatternX,
-        PatternDiagonal,
-
-    }
+    
    public static int GetRandomIndex()
 {
     System.Random random = new System.Random();
@@ -53,3 +46,11 @@ public class BrickGeneratePattern : MonoBehaviour
         }
     }
 }
+public enum RandomTypeEnum
+    {   
+        Default,
+        IsOnLine,
+        PatternX,
+        PatternDiagonal,
+
+    }

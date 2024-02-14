@@ -31,6 +31,7 @@ public class MapManager : MonoBehaviour
 
     public void UnRegisterBlock(EntityBehaviour entityBehaviour)
     {
+        if(entityBehaviour != null)
         mapInfo[(int)entityBehaviour.coordinates.x, (int)entityBehaviour.coordinates.y].Delete(entityBehaviour);
     }
 
