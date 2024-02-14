@@ -15,7 +15,7 @@ public class LevelBehaviour : MonoBehaviour
     {
         mapGenerator = GetComponentInChildren<SpawnMap>();
         
-        MapManager.Instance.SetMap(mapGenerator.GenerateMap(LevelPropetries.width, LevelPropetries.height,LevelPropetries.countOfPlayer));
+        MapManager.Instance.SetMap(mapGenerator.GenerateMap(LevelPropetries.width, LevelPropetries.height,LevelPropetries.countOfPlayer,LevelPropetries.randomType));
         
         
         SpawnPlayer(playerTestDescription);

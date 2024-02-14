@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 public class SpawnMap : MonoBehaviour
 {
-    [FormerlySerializedAs("BlockPrefab")] 
+    [FormerlySerializedAs("BlockPrefab")]
     [SerializeField] private PlaceableEntityBehaviour placeableEntityPrefab;
     [SerializeField] private EntityDescription EmptyBlock;
     [SerializeField] private EntityDescription Bedrock;
@@ -17,42 +17,50 @@ public class SpawnMap : MonoBehaviour
     [SerializeReference] private float spawnProbability = 0.5f;
 
     private List<Vector3> validCoordinates;
+    private EntityBehaviour[,] mapInfo;
+    private EntityBehaviour[,] EmptyBlockInfo;
     private MapUnit[,] newMap;
-
     private int width;
     private int height;
     private int countOfPlayer;
+    BrickGeneratePattern.RandomTypeEnum randomType;
+    public class MapPartsInfo
+    {
+        public EntityBehaviour[,] MapInfo;
+        public EntityBehaviour[,] EmptyBlockInfo;
 
-  
+        public MapPartsInfo(EntityBehaviour[,] mapInfo, EntityBehaviour[,] emptyBlockInfo, int height, int width)
+        {
+            this.EmptyBlockInfo = new EntityBehaviour[width, height];
+            this.MapInfo = new EntityBehaviour[width, height];
 
-    public MapUnit[,] GenerateMap(int width, int height, int countOfPlayer)
+            EmptyBlockInfo = emptyBlockInfo;
+            MapInfo = mapInfo;
+        }
+    }
+
+
+    public MapPartsInfo GenerateMap(int width, int height, int countOfPlayer, BrickGeneratePattern.RandomTypeEnum randomType)
     {
         this.width = width;
         this.height = height;
-        this.countOfPlayer = countOfPlayer;
+       
 
-        newMap = new MapUnit[width, height];
-        
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                newMap[x, y] = new MapUnit();
-            }
-        }
-        
-        List<Vector3> spawnCoordinatesException = CreateSpawnCoordinatesExceptionList(countOfPlayer);
-        Vector3[,] coordinatesOfMap = GenerateEmptyBlock(spawnCoordinatesException);
-        List<Vector3> unbreakableWallCoordinatesException = GenerateUnBreakWall(coordinatesOfMap, spawnCoordinatesException);
-        GenerateBricks(coordinatesOfMap, spawnCoordinatesException, unbreakableWallCoordinatesException);
-        
+        EmptyBlockInfo = new EntityBehaviour[width, height];
+        mapInfo = new EntityBehaviour[width, height];
+        List<Vector3> spawnPlayerCoordinatesException = CreatespawnPlayerCoordinatesExceptionList(countOfPlayer);
+        Vector3[,] coordinatesOfMap = GenerateEmptyBlock(spawnPlayerCoordinatesException);
+        List<Vector3> unbreakableWallCoordinatesException = GenerateUnBreakWall(coordinatesOfMap, spawnPlayerCoordinatesException);
+        GenerateBricks(coordinatesOfMap, spawnPlayerCoordinatesException, unbreakableWallCoordinatesException,randomType);
+
+        MapPartsInfo newMap = new MapPartsInfo(mapInfo, EmptyBlockInfo, height, width);
 
         return newMap;
     }
-    private Vector3[,] GenerateEmptyBlock(List<Vector3> spawnCoordinatesException)
+    private Vector3[,] GenerateEmptyBlock(List<Vector3> spawnPlayerCoordinatesException)
     {
         Vector3[,] coordinatesOfMap = new Vector3[width, height];
-        List<Vector3> unbreakableWallCoordinatesException = FillValidCoordinatesForUnBreakWall(coordinatesOfMap, spawnCoordinatesException);
+        List<Vector3> unbreakableWallCoordinatesException = FillListOfValidCoordinatesForUnBreakWall(coordinatesOfMap, spawnPlayerCoordinatesException);
 
         for (int coordinateX = 0; coordinateX < width; ++coordinateX)
         {
@@ -86,15 +94,13 @@ public class SpawnMap : MonoBehaviour
                 {
                     continue;
                 }
-
-
                 InstantiateBlock(new Vector3(coordinateX, coordinateY, 0f), Bedrock, new Vector2(-1, -1), true);
             }
         }
     }
-   
+
     //Спавн гравців
-    private List<Vector3> CreateSpawnCoordinatesExceptionList(int countOfPlayer)
+    private List<Vector3> CreatespawnPlayerCoordinatesExceptionList(int countOfPlayer)
     {
         List<Vector3> spawnCoordinates = new List<Vector3>();
 
@@ -105,9 +111,7 @@ public class SpawnMap : MonoBehaviour
                 spawnCoordinates.AddRange(SpawnCoordinatesSetForTwoPlayers());
                 break;
             case 3:
-
-                System.Random random = new System.Random();
-                int randomIndex = random.Next(2);
+                int randomIndex = BrickGeneratePattern.GetRandomIndex();
                 if (randomIndex == 0)
                 {
 
@@ -200,14 +204,14 @@ public class SpawnMap : MonoBehaviour
         };
     }
     //Незламні кірпічі
-    private List<Vector3> GenerateUnBreakWall(Vector3[,] coordinatesOfMap, List<Vector3> spawnCoordinatesException)
+    private List<Vector3> GenerateUnBreakWall(Vector3[,] coordinatesOfMap, List<Vector3> spawnPlayerCoordinatesException)
     {
-        List<Vector3> validCoordinatesOfUnBreakWall = FillValidCoordinatesForUnBreakWall(coordinatesOfMap, spawnCoordinatesException);
+        List<Vector3> validCoordinatesOfUnBreakWall = FillListOfValidCoordinatesForUnBreakWall(coordinatesOfMap, spawnPlayerCoordinatesException);
         SpawnUnBreakWallOnValidCoordinates(coordinatesOfMap, validCoordinatesOfUnBreakWall);
         return validCoordinatesOfUnBreakWall;
     }
 
-    private List<Vector3> FillValidCoordinatesForUnBreakWall(Vector3[,] coordinatesOfMap, List<Vector3> spawnCoordinatesException)
+    private List<Vector3> FillListOfValidCoordinatesForUnBreakWall(Vector3[,] coordinatesOfMap, List<Vector3> spawnPlayerCoordinatesException)
     {
         List<Vector3> validCoordinatesOfUnBreakWall = new List<Vector3>();
 
@@ -215,7 +219,7 @@ public class SpawnMap : MonoBehaviour
         {
             for (int coordinateY = 0; coordinateY < coordinatesOfMap.GetLength(1); coordinateY++)
             {
-                if ((coordinateX % 2 != 0 || coordinateX == 1) && (coordinateY % 2 != 0 || coordinateY == 1) && !spawnCoordinatesException.Contains(new Vector3(coordinateX, coordinateY, 0f)))
+                if ((coordinateX % 2 != 0 || coordinateX == 1) && (coordinateY % 2 != 0 || coordinateY == 1) && !spawnPlayerCoordinatesException.Contains(new Vector3(coordinateX, coordinateY, 0f)))
                 {
                     validCoordinatesOfUnBreakWall.Add(new Vector3(coordinateX, coordinateY, 0f));
                 }
@@ -248,31 +252,64 @@ public class SpawnMap : MonoBehaviour
         }
     }
     //Cтворення Кірпічів
-    private void GenerateBricks(Vector3[,] coordinatesOfMap, List<Vector3> spawnCoordinatesException, List<Vector3> unbreakableWallCoordinatesException)
+    private void GenerateBricks(Vector3[,] coordinatesOfMap, List<Vector3> spawnPlayerCoordinatesException, List<Vector3> unbreakableWallCoordinatesException, BrickGeneratePattern.RandomTypeEnum randomType)
     {
-        foreach (Vector3 coordinate in coordinatesOfMap)
+        foreach (Vector3 currentCoordinate in coordinatesOfMap)
         {
-            if (spawnCoordinatesException.Contains(coordinate) || unbreakableWallCoordinatesException.Contains(coordinate))
+            float widthOfobstacle = 1f; // Налаштуйте тут ширину фігур
+            if (!(spawnPlayerCoordinatesException.Contains(currentCoordinate) || unbreakableWallCoordinatesException.Contains(currentCoordinate)))
             {
-                continue;
+                switch (randomType)
+                {
+                    case BrickGeneratePattern.RandomTypeEnum.PatternDiagonal:
+                        if (BrickGeneratePattern.IsOnDiagonalPatternFromLeftTopToRightBottom(currentCoordinate, widthOfobstacle))
+                        {
+                            TrySpawnBlock(currentCoordinate, coordinatesOfMap);
+                        }
+                        break;
+                    case BrickGeneratePattern.RandomTypeEnum.PatternX:
+                        if (BrickGeneratePattern.IsOnDiagonalsPatternX(currentCoordinate, width, height, widthOfobstacle))
+                        {
+                            TrySpawnBlock(currentCoordinate, coordinatesOfMap);
+                        }
+                        break;
+                    case BrickGeneratePattern.RandomTypeEnum.IsOnLine:
+                        int randomIndex = BrickGeneratePattern.GetRandomIndex();
+                        if (randomIndex == 0)
+                        {
+
+                            if (BrickGeneratePattern.IsOnLine(currentCoordinate, width, height, widthOfobstacle, true))
+                            {
+                                TrySpawnBlock(currentCoordinate, coordinatesOfMap);
+                            }
+                        }
+                        else
+                        {
+
+                            if (BrickGeneratePattern.IsOnLine(currentCoordinate, width, height, widthOfobstacle, false))
+                            {
+                                TrySpawnBlock(currentCoordinate, coordinatesOfMap);
+
+                            }
+                        }
+                        break;
+                    case BrickGeneratePattern.RandomTypeEnum.Default:
+                        TrySpawnBlock(currentCoordinate, coordinatesOfMap);
+
+                        break;
+                }
             }
-            RandomInstantiateObject(coordinate, Brick, spawnProbability, coordinatesOfMap);
         }
     }
-    //Рандомайзер    
-    private void RandomInstantiateObject(Vector3 coordinatesOfMap, EntityDescription objectToInstantiate,
-     float spawnProbability, Vector3[,] coordinates)
+
+    private void TrySpawnBlock(Vector3 currentCoordinate, Vector3[,] coordinatesOfMap)
     {
-
-        float spawnChance = Random.Range(0f, 1f);
-
-
-        if (spawnChance < spawnProbability)
+        if (BrickGeneratePattern.GetSpawnChance() < spawnProbability)
         {
-            InstantiateBlock(coordinatesOfMap, objectToInstantiate, FindCoordinateIndices(coordinatesOfMap, coordinates));
+            Vector2 coordinateIndices = FindCoordinateIndices(currentCoordinate, coordinatesOfMap);
+            InstantiateBlock(currentCoordinate, Brick, coordinateIndices);
         }
     }
-
     private void InstantiateBlock(Vector3 position, EntityDescription description, Vector2 cordination, bool isFrame = false)
     {
         GameObject obj = Instantiate(placeableEntityPrefab.gameObject, position, Quaternion.identity);
@@ -282,9 +319,14 @@ public class SpawnMap : MonoBehaviour
 
         if (!isFrame)
         {
-            newMap[(int)cordination.x, (int)cordination.y].Add(obj.GetComponent<EntityBehaviour>());
+            mapInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
+            if (description == EmptyBlock)
+            {
+                EmptyBlockInfo[(int)cordination.x, (int)cordination.y] = obj.GetComponent<EntityBehaviour>();
+            }
         }
     }
+
     private Vector2 FindCoordinateIndices(Vector3 coordinate, Vector3[,] coordinates)
     {
         for (int coordinateX = 0; coordinateX < width; coordinateX++)
@@ -301,5 +343,18 @@ public class SpawnMap : MonoBehaviour
 
         return Vector2.zero;
     }
-   
+    private void PrintMassive()
+    {
+        for (int coordinateX = 0; coordinateX < width; coordinateX++)
+        {
+            string rowString = "";
+
+            for (int coordinateY = 0; coordinateY < height; coordinateY++)
+            {
+                rowString += "[" + coordinateX + "," + coordinateY + "]: " + mapInfo[coordinateX, coordinateY].ToString() + "  ";
+            }
+
+            Debug.Log(rowString);
+        }
+    }
 }
