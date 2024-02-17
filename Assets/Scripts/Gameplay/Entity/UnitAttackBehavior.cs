@@ -44,7 +44,7 @@ public class UnitAttackBehavior : MonoBehaviour
         var coordinates = unit.coordinates;
         yield return new WaitForSeconds(0.11f);
 
-        if (currentBombCount < bombAmount.Value)
+        if (currentBombCount < bombAmount)
         {
             timeElapsed = Time.time - lastLaunchTime;
 

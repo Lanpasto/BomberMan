@@ -10,6 +10,7 @@ public class BombBehaviour : PlaceableEntityBehaviour
 
     private StatAttribute BombActivationTime => attackBehavior.unit.GetStat("BombActivationTime");
     private StatAttribute Pierce => attackBehavior.unit.GetStat("Pierce");
+    private StatAttribute Radius => attackBehavior.unit.GetStat("Radius");
 
     public void SetSourceAttackBehaviour(UnitAttackBehavior attackBehavior)
     {
@@ -59,8 +60,8 @@ public class BombBehaviour : PlaceableEntityBehaviour
     
     private IEnumerator StartBombCoroutine()
     {
-        yield return new WaitForSeconds(BombActivationTime.Value);
-        var entitiesOnWay = MapManager.Instance.GetEntitiesOnWay(coordinates, (int)Pierce.Value);
+        yield return new WaitForSeconds(BombActivationTime);
+        var entitiesOnWay = MapManager.Instance.GetEntitiesOnWay(coordinates, (int)Pierce,(int)Radius);
         foreach (var entity in entitiesOnWay)
         {
              entity.TakeDamage();
