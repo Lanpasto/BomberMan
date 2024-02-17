@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class BombBehaviour : PlaceableEntityBehaviour
 { 
-    [SerializeField] private GameObject FireBeam;
     public Action<PlaceableEntityBehaviour> OnExplode = delegate { };
     public UnitAttackBehavior attackBehavior { get; set; }
 
