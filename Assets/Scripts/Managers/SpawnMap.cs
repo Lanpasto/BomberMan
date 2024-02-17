@@ -12,8 +12,6 @@ public class SpawnMap : MonoBehaviour
     [SerializeField] private EntityDescription EmptyBlock;
     [SerializeField] private EntityDescription Bedrock;
     [SerializeField] private EntityDescription Brick;
-
-
     [SerializeReference] private float spawnProbability = 0.5f;
     private EntityBehaviour[,] mapInfo;
     private MapUnit[,] newMap;
@@ -22,13 +20,14 @@ public class SpawnMap : MonoBehaviour
     private int countOfPlayer;
     RandomTypeEnum randomType;
 
-
-
     public MapUnit[,] GenerateMap(int width, int height, int countOfPlayer, RandomTypeEnum randomType)
     {
         this.width = width;
         this.height = height;
         this.countOfPlayer = countOfPlayer;
+        PlayerSpawnPointFactory spawnPointFactory = new PlayerSpawnPointFactory(width, height);
+        List<Vector3> spawnPlayerCoordinatesException = spawnPointFactory.CreateSpawnPoints(countOfPlayer);
+
         newMap = new MapUnit[width, height];
 
         for (int x = 0; x < width; x++)
@@ -39,8 +38,6 @@ public class SpawnMap : MonoBehaviour
             }
         }
 
-
-        List<Vector3> spawnPlayerCoordinatesException = CreatespawnPlayerCoordinatesExceptionList(countOfPlayer);
         Vector3[,] coordinatesOfMap = GenerateEmptyBlock(spawnPlayerCoordinatesException);
         List<Vector3> unbreakableWallCoordinatesException = GenerateUnBreakWall(coordinatesOfMap, spawnPlayerCoordinatesException);
         GenerateBricks(coordinatesOfMap, spawnPlayerCoordinatesException, unbreakableWallCoordinatesException, randomType);
@@ -86,111 +83,6 @@ public class SpawnMap : MonoBehaviour
                 InstantiateBlock(new Vector3(coordinateX, coordinateY, 0f), Bedrock, new Vector2(-1, -1), true);
             }
         }
-    }
-
-    //Спавн гравців
-    private List<Vector3> CreatespawnPlayerCoordinatesExceptionList(int countOfPlayer)
-    {
-        List<Vector3> spawnCoordinates = new List<Vector3>();
-
-        switch (countOfPlayer)
-        {
-            case 2:
-
-                spawnCoordinates.AddRange(SpawnCoordinatesSetForTwoPlayers());
-                break;
-            case 3:
-                int randomIndex = BrickGeneratePattern.GetRandomIndex();
-                if (randomIndex == 0)
-                {
-
-                    spawnCoordinates.AddRange(SpawnCoordinatesSetForThreePlayersFirstCase());
-                }
-                else
-                {
-
-                    spawnCoordinates.AddRange(SpawnCoordinatesSetForThreePlayersSecondCase());
-                }
-                break;
-            case 4:
-                spawnCoordinates.AddRange(SpawnCoordinatesSetForFourPlayers());
-
-                break;
-        }
-
-        return spawnCoordinates;
-    }
-
-    private List<Vector3> SpawnCoordinatesSetForTwoPlayers()
-    {
-        return new List<Vector3>
-        {   
-            //Верхній кут лівий
-             new Vector3(width - 1, 1, 0f),
-             new Vector3(width - 2, 0, 0f),
-             new Vector3(width - 1, 0, 0f),
-            //Нижній кут правий
-             new Vector3(1, height - 1, 0f),
-             new Vector3(0, height - 2, 0f),
-             new Vector3(0, height - 1, 0f),
-        };
-    }
-    private List<Vector3> SpawnCoordinatesSetForThreePlayersFirstCase()
-    {
-        return new List<Vector3>
-        {    
-            //Верхній кут лівий
-             new Vector3(width - 1, 1, 0f),
-             new Vector3(width - 2, 0, 0f),
-             new Vector3(width - 1, 0, 0f),
-            //Нижній кут правий
-             new Vector3(1, height - 1, 0f),
-             new Vector3(0, height - 2, 0f),
-             new Vector3(0, height - 1, 0f),
-             //Верхній кут правий
-             new Vector3(width - 1, height - 1, 0f),
-             new Vector3(width - 2, height - 1, 0f),
-             new Vector3(width-1 , height-2 , 0f),
-        };
-    }
-    private List<Vector3> SpawnCoordinatesSetForThreePlayersSecondCase()
-    {
-        return new List<Vector3>
-        {   
-            //Верхній кут лівий
-             new Vector3(width - 1, 1, 0f),
-             new Vector3(width - 2, 0, 0f),
-             new Vector3(width - 1, 0, 0f),
-            //Нижній кут правий
-             new Vector3(1, height - 1, 0f),
-             new Vector3(0, height - 2, 0f),
-             new Vector3(0, height - 1, 0f),
-              //Нижній кут лівий
-              new Vector3(0, 1, 0f),
-             new Vector3(1, 0, 0f),
-             new Vector3(0, 0, 0f),
-        };
-    }
-    private List<Vector3> SpawnCoordinatesSetForFourPlayers()
-    {
-        return new List<Vector3>
-        {
-            new Vector3(width - 1, 1, 0f),
-             new Vector3(width - 2, 0, 0f),
-             new Vector3(width - 1, 0, 0f),
-            //Нижній кут правий
-             new Vector3(1, height - 1, 0f),
-             new Vector3(0, height - 2, 0f),
-             new Vector3(0, height - 1, 0f),
-             //Верхній кут правий
-             new Vector3(width - 1, height - 1, 0f),
-             new Vector3(width - 2, height - 1, 0f),
-             new Vector3(width-1 , height-2 , 0f),
-             //Нижній кут лівий
-              new Vector3(0, 1, 0f),
-             new Vector3(1, 0, 0f),
-             new Vector3(0, 0, 0f),
-        };
     }
     //Незламні кірпічі
     private List<Vector3> GenerateUnBreakWall(Vector3[,] coordinatesOfMap, List<Vector3> spawnPlayerCoordinatesException)
@@ -299,6 +191,7 @@ public class SpawnMap : MonoBehaviour
             InstantiateBlock(currentCoordinate, Brick, coordinateIndices);
         }
     }
+
      private void InstantiateBlock(Vector3 position, EntityDescription description, Vector2 cordination, bool isFrame = false)
     {
         GameObject obj = Instantiate(placeableEntityPrefab.gameObject, position, Quaternion.identity);
@@ -327,19 +220,5 @@ public class SpawnMap : MonoBehaviour
         }
 
         return Vector2.zero;
-    }
-    private void PrintMassive()
-    {
-        for (int coordinateX = 0; coordinateX < width; coordinateX++)
-        {
-            string rowString = "";
-
-            for (int coordinateY = 0; coordinateY < height; coordinateY++)
-            {
-                rowString += "[" + coordinateX + "," + coordinateY + "]: " + mapInfo[coordinateX, coordinateY].ToString() + "  ";
-            }
-
-            Debug.Log(rowString);
-        }
     }
 }
