@@ -73,9 +73,9 @@ public class UnitControlBehaviour : MonoBehaviour
     {
         if (direction != Vector2.zero)
         {
-            Vector2 force = direction.normalized * Speed.Value;
+            Vector2 force = direction.normalized * Speed;
             rb.AddForce(force, ForceMode2D.Impulse);
-            float maxVelocity = 2f * Speed.Value;
+            float maxVelocity = 2f * Speed;
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxVelocity);
         }
     }

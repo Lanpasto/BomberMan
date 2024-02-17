@@ -10,6 +10,11 @@ public class StatAttribute
 {
     public StatDescription statDescription;
     public float Value;
+    
+    public static implicit operator float(StatAttribute attribute)
+    {
+        return attribute.Value;
+    }
             
 }
 [Serializable]

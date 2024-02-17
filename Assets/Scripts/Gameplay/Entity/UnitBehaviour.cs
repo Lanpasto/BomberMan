@@ -34,7 +34,7 @@ public class UnitBehaviour : EntityBehaviour
 
     public override void TakeDamage()
     {
-        if (GetStat("Health").Value <= 0)
+        if (GetStat("Health") <= 0)
         {
             base.TakeDamage();
         }
