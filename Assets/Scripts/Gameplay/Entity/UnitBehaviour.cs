@@ -31,7 +31,15 @@ public class UnitBehaviour : EntityBehaviour
             AddStat(statAttribute);
         }
     }
-    
+
+    public override void TakeDamage()
+    {
+        if (GetStat("Health").Value <= 0)
+        {
+            base.TakeDamage();
+        }
+    }
+
     private void Update()
     {
         FindPositionOnMap();
@@ -39,15 +47,13 @@ public class UnitBehaviour : EntityBehaviour
     
     private void FindPositionOnMap()
     {
-
-        
         var map = MapManager.Instance.GetMap();
         float minDistance = Mathf.Infinity;
         
         MapUnit closestPointObject = new MapUnit();
         foreach (var obj in map)
         {
-            //Debug.Log(obj);
+            
             float distance = 0f;
             if (!obj.Contains(this.entityDescription))
             {
@@ -71,11 +77,6 @@ public class UnitBehaviour : EntityBehaviour
             this.coordinates = closestPointObject.GetCoordinates();
             MapManager.Instance.RegisterNewBlock(this);
         }
-        
-        
-        
-        
-       
     }
 }
 

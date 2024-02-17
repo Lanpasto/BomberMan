@@ -6,12 +6,9 @@ using UnityEngine;
 
 public class PlaceableEntityBehaviour : EntityBehaviour
 {
-    public bool breakeable { get; set; }
     public string nameID { get; set; }
     protected BoxCollider2D Collider2D { get; set; }
-
-    private bool isQuit = false;
-
+    
     private void Awake()
     {
         Collider2D = GetComponent<BoxCollider2D>();
@@ -30,14 +27,4 @@ public class PlaceableEntityBehaviour : EntityBehaviour
         base.Initialize(description, coordinates);
     }
 
-    private void OnDestroy()
-    {
-        if(MapManager.Instance != null && !isQuit)
-            MapManager.Instance.UnRegisterBlock(this);
-    }
-
-    private void OnApplicationQuit()
-    {
-        isQuit = true;
-    }
 }

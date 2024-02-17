@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: LevelProps
   m_EditorClassIdentifier: 
   width: 13
-  height: 15
+  height: 13
   countOfPlayer: 4
+  randomType: 0

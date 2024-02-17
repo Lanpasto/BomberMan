@@ -32,7 +32,7 @@ public class MapManager : MonoBehaviour
     public void UnRegisterBlock(EntityBehaviour entityBehaviour)
     {
         if(entityBehaviour != null)
-        mapInfo[(int)entityBehaviour.coordinates.x, (int)entityBehaviour.coordinates.y].Delete(entityBehaviour);
+            mapInfo[(int)entityBehaviour.coordinates.x, (int)entityBehaviour.coordinates.y].Delete(entityBehaviour);
     }
 
     public MapUnit GetBlockBehaviour(Vector2 coordinates)
@@ -43,6 +43,86 @@ public class MapManager : MonoBehaviour
     public Vector2 GetPositionByCoordinates(Vector2 coordinates)
     {
         return mapInfo[(int)coordinates.x, (int)coordinates.y].GetTransform();
+    }
+
+    public EntityBehaviour GetCoordinatesByBlock(EntityBehaviour ent)
+    {
+        foreach (var mapunit in mapInfo)
+        {
+            foreach (var unit in mapunit.unitObjects)
+            {
+                if (ent == unit)
+                {
+                    return unit;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public List<EntityBehaviour> GetEntitiesOnWay(Vector2 currentCoordinate, int pierce, bool allDirections = true)
+    {
+        List<EntityBehaviour> allEntityBehaviourOnWay = new List<EntityBehaviour>();
+        if(allDirections)
+        {
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.down));
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.up));
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.left));
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.right));
+        }
+
+        return allEntityBehaviourOnWay;
+    }
+
+    private List<EntityBehaviour> GetEntitiesOnWay(Vector2 currentCoordinate, int pierce, Vector2 direction)
+    {
+        int pierceCount = pierce;
+        
+        int x = (int)direction.x;
+        int y = (int)direction.y;
+
+        List<EntityBehaviour> entities = new List<EntityBehaviour>();
+        
+        while(true)
+        {
+            if ((int)currentCoordinate.x + x >= 0 && (int)currentCoordinate.x + x < mapInfo.GetLength(0) &&
+                (int)currentCoordinate.y + y >= 0 && (int)currentCoordinate.y + y < mapInfo.GetLength(1))
+            {
+                var mapUnit = mapInfo[(int)currentCoordinate.x + x, (int)currentCoordinate.y + y];
+                bool hasFitEntity = false;
+                foreach (var entity in mapUnit.GetAll())
+                {
+                    if (entity.entityDescription.HasCollider2D)
+                    {
+                        if (entity.entityDescription.CanBeDamaged)
+                        {
+                            entities.Add(entity);
+                            hasFitEntity = true;
+                        }
+                        else
+                        {
+                            if (entity.entityDescription.CanStopExplodeExpansion)
+                            {
+                                pierceCount = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (hasFitEntity)
+                    pierceCount--;
+                
+                if (pierceCount <= 0)
+                    break;
+                
+                x += (int)direction.x;
+                y += (int)direction.y;
+            }
+            else
+                break;
+        }
+        return entities;
     }
 
 

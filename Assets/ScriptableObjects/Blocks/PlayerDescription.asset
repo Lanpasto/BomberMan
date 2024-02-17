@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: PlayerDescription
   m_EditorClassIdentifier: 
   nameBlock: PLayer
-  CanBeDamaged: 0
+  CanBeDamaged: 1
   sprite: {fileID: 0}
-  HasCollider2D: 0
+  HasCollider2D: 1
   _static: 0
   sortOrder: 0
+  CanStopExplodeExpansion: 0

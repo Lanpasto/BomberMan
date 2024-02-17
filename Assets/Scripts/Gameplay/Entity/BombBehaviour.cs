@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class BombBehaviour : PlaceableEntityBehaviour
 { 
+    [SerializeField] private GameObject FireBeam;
     public Action<PlaceableEntityBehaviour> OnExplode = delegate { };
     public UnitAttackBehavior attackBehavior { get; set; }
 
     private StatAttribute BombActivationTime => attackBehavior.unit.GetStat("BombActivationTime");
+    private StatAttribute Pierce => attackBehavior.unit.GetStat("Pierce");
 
     public void SetSourceAttackBehaviour(UnitAttackBehavior attackBehavior)
     {
@@ -55,12 +57,17 @@ public class BombBehaviour : PlaceableEntityBehaviour
     {
         StartCoroutine(StartBombCoroutine());
     }
-   
+    
     private IEnumerator StartBombCoroutine()
     {
-       
         yield return new WaitForSeconds(BombActivationTime.Value);
-        Destroy(this.gameObject);    
+        var entitiesOnWay = MapManager.Instance.GetEntitiesOnWay(coordinates, (int)Pierce.Value);
+        foreach (var entity in entitiesOnWay)
+        {
+             entity.TakeDamage();
+        }
+        Destroy(this.gameObject);
+        yield return null;
     }
    
    

@@ -14,5 +14,6 @@ public class EntityDescription : ScriptableObject
     public bool HasCollider2D;
     public bool _static;
     public int sortOrder = 0;
+    public bool CanStopExplodeExpansion;
 
 }

@@ -143,7 +143,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d64a5f2ea3ab80f4b9438953351c5151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates: {x: 0, y: 0}
-  breakeable: 0
-  nameID: 
-  attackBehavior: {fileID: 0}
+  FireBeam: {fileID: 2268428797302026437, guid: 3e033c6ddec52b144932d796b3cb4fc3, type: 3}

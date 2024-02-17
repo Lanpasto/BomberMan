@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class LevelBehaviour : MonoBehaviour
 {
+
     public UnitDescriptionSO playerTestDescription;
     public LevelPropetries LevelPropetries;
-
     private SpawnMap mapGenerator;
    
     
