@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    
+     private int cameraPadding = 3;
 
-    [SerializeField] private LevelPropetries levelPropetries;
- 
-    private int cameraPadding = 3;
-
-    void Start()
+   public void Initialize(LevelPropetries levelPropetries)
     {
-   
+        
         Camera mainCamera = Camera.main;
 
         if (mainCamera != null && levelPropetries != null)

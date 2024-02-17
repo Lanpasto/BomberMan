@@ -19,6 +19,8 @@ public class LevelBehaviour : MonoBehaviour
         
         
         SpawnPlayer(playerTestDescription);
+
+        Camera.main.GetComponent<CameraManager>().Initialize(LevelPropetries);
     }
 
     private void SpawnPlayer(UnitDescriptionSO unitDescription)
