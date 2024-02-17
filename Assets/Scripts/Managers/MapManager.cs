@@ -61,23 +61,24 @@ public class MapManager : MonoBehaviour
         return null;
     }
 
-    public List<EntityBehaviour> GetEntitiesOnWay(Vector2 currentCoordinate, int pierce, bool allDirections = true)
+    public List<EntityBehaviour> GetEntitiesOnWay(Vector2 currentCoordinate, int pierce, int radius, bool allDirections = true)
     {
         List<EntityBehaviour> allEntityBehaviourOnWay = new List<EntityBehaviour>();
         if(allDirections)
         {
-            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.down));
-            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.up));
-            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.left));
-            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,Vector2.right));
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,radius,Vector2.down));
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,radius,Vector2.up));
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,radius,Vector2.left));
+            allEntityBehaviourOnWay.AddRange(GetEntitiesOnWay(currentCoordinate,pierce,radius,Vector2.right));
         }
 
         return allEntityBehaviourOnWay;
     }
 
-    private List<EntityBehaviour> GetEntitiesOnWay(Vector2 currentCoordinate, int pierce, Vector2 direction)
+    private List<EntityBehaviour> GetEntitiesOnWay(Vector2 currentCoordinate, int pierce, int radius, Vector2 direction)
     {
         int pierceCount = pierce;
+        int unitsToInspect = radius;
         
         int x = (int)direction.x;
         int y = (int)direction.y;
@@ -89,6 +90,11 @@ public class MapManager : MonoBehaviour
             if ((int)currentCoordinate.x + x >= 0 && (int)currentCoordinate.x + x < mapInfo.GetLength(0) &&
                 (int)currentCoordinate.y + y >= 0 && (int)currentCoordinate.y + y < mapInfo.GetLength(1))
             {
+                if (unitsToInspect <= 0)
+                {
+                    break;
+                }
+                
                 var mapUnit = mapInfo[(int)currentCoordinate.x + x, (int)currentCoordinate.y + y];
                 bool hasFitEntity = false;
                 foreach (var entity in mapUnit.GetAll())
@@ -118,6 +124,8 @@ public class MapManager : MonoBehaviour
                 
                 x += (int)direction.x;
                 y += (int)direction.y;
+
+                unitsToInspect--;
             }
             else
                 break;

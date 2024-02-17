@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerBinds:
   - action: 0
-    key: 119
+    key: 334
   - action: 1
-    key: 115
+    key: 336
   - action: 2
-    key: 97
+    key: 337
   - action: 3
-    key: 100
+    key: 335
   - action: 4
-    key: 32
+    key: 344
