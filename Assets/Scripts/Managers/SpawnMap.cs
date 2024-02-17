@@ -12,7 +12,7 @@ public class SpawnMap : MonoBehaviour
     [SerializeField] private EntityDescription EmptyBlock;
     [SerializeField] private EntityDescription Bedrock;
     [SerializeField] private EntityDescription Brick;
-    [SerializeReference] private float spawnProbability = 0.5f;
+    [SerializeReference] private float spawnProbability;
     private EntityBehaviour[,] mapInfo;
     private MapUnit[,] newMap;
     private int width;
@@ -135,64 +135,94 @@ public class SpawnMap : MonoBehaviour
     //Cтворення Кірпічів
     private void GenerateBricks(Vector3[,] coordinatesOfMap, List<Vector3> spawnPlayerCoordinatesException, List<Vector3> unbreakableWallCoordinatesException, RandomTypeEnum randomType)
     {
+        List<Vector3> eligibleSpawnPoints = new List<Vector3>(); 
+
         foreach (Vector3 currentCoordinate in coordinatesOfMap)
         {
-            float widthOfobstacle = 1f; // Налаштуйте тут ширину фігур
+            float widthOfObstacle = Mathf.Min(width, height) * 0.03f;
             if (!(spawnPlayerCoordinatesException.Contains(currentCoordinate) || unbreakableWallCoordinatesException.Contains(currentCoordinate)))
             {
+
                 switch (randomType)
                 {
-                    case RandomTypeEnum.PatternDiagonal:
-                        if (BrickGeneratePattern.IsOnDiagonalPatternFromLeftTopToRightBottom(currentCoordinate, widthOfobstacle))
+                    case RandomTypeEnum.PatternX:
+                        if (BrickGeneratePattern.IsOnDiagonalsPatternX(currentCoordinate, width, height, widthOfObstacle))
                         {
-                            TrySpawnBlock(currentCoordinate, coordinatesOfMap);
+                            if (BrickGeneratePattern.GetSpawnChance() < spawnProbability)
+                            {
+                                Vector2 coordinateIndices = FindCoordinateIndices(currentCoordinate, coordinatesOfMap);
+                                InstantiateBlock(currentCoordinate, Brick, coordinateIndices);
+                                eligibleSpawnPoints.Add(currentCoordinate);
+                            }
                         }
                         break;
-                    case RandomTypeEnum.PatternX:
-                        if (BrickGeneratePattern.IsOnDiagonalsPatternX(currentCoordinate, width, height, widthOfobstacle))
+                    case RandomTypeEnum.PatternDiagonal:
+                        if (BrickGeneratePattern.IsOnDiagonalPatternRightBottom(currentCoordinate, width, height, widthOfObstacle))
                         {
-                            TrySpawnBlock(currentCoordinate, coordinatesOfMap);
+                            if (BrickGeneratePattern.GetSpawnChance() < spawnProbability)
+                            {
+                                Vector2 coordinateIndices = FindCoordinateIndices(currentCoordinate, coordinatesOfMap);
+                                InstantiateBlock(currentCoordinate, Brick, coordinateIndices);
+                                eligibleSpawnPoints.Add(currentCoordinate);
+                            }
                         }
                         break;
                     case RandomTypeEnum.IsOnLine:
-                        int randomIndex = BrickGeneratePattern.GetRandomIndex();
-                        if (randomIndex == 0)
-                        {
-
-                            if (BrickGeneratePattern.IsOnLine(currentCoordinate, width, height, widthOfobstacle, true))
+                        if (BrickGeneratePattern.IsOnLine(currentCoordinate, width, height, widthOfObstacle))
+                        { if (BrickGeneratePattern.GetSpawnChance() < spawnProbability)
                             {
-                                TrySpawnBlock(currentCoordinate, coordinatesOfMap);
-                            }
-                        }
-                        else
-                        {
-
-                            if (BrickGeneratePattern.IsOnLine(currentCoordinate, width, height, widthOfobstacle, false))
-                            {
-                                TrySpawnBlock(currentCoordinate, coordinatesOfMap);
-
-                            }
-                        }
+                                Vector2 coordinateIndices = FindCoordinateIndices(currentCoordinate, coordinatesOfMap);
+                                InstantiateBlock(currentCoordinate, Brick, coordinateIndices);
+                                eligibleSpawnPoints.Add(currentCoordinate);
+                            }}
                         break;
                     case RandomTypeEnum.Default:
                         TrySpawnBlock(currentCoordinate, coordinatesOfMap);
-
                         break;
                 }
+               SpawnBlockBasedOnDistance(currentCoordinate, eligibleSpawnPoints, coordinatesOfMap);
+
             }
         }
+    }
+
+    private void SpawnBlockBasedOnDistance(Vector3 currentCoordinate, List<Vector3> eligibleSpawnPoints, Vector3[,] coordinatesOfMap)
+    {
+        float minDistance = float.MaxValue;
+
+        foreach (Vector3 spawnPoint in eligibleSpawnPoints)
+        {
+            float distance = Vector3.Distance(currentCoordinate, spawnPoint);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+            }
+        }
+
+        float spawnChance = BrickGeneratePattern.CalculateSpawnChance(minDistance);
+        if (Random.Range(0.0f, 1.0f) < spawnChance)
+        {
+            SetBrick(currentCoordinate, coordinatesOfMap);
+        }
+    }
+  private void SetBrick(Vector3 currentCoordinate, Vector3[,] coordinatesOfMap)
+    {
+        Vector2 coordinateIndices = FindCoordinateIndices(currentCoordinate, coordinatesOfMap);
+        InstantiateBlock(currentCoordinate, Brick, coordinateIndices);
     }
 
     private void TrySpawnBlock(Vector3 currentCoordinate, Vector3[,] coordinatesOfMap)
     {
         if (BrickGeneratePattern.GetSpawnChance() < spawnProbability)
         {
-            Vector2 coordinateIndices = FindCoordinateIndices(currentCoordinate, coordinatesOfMap);
-            InstantiateBlock(currentCoordinate, Brick, coordinateIndices);
+            SetBrick(currentCoordinate, coordinatesOfMap);
         }
     }
 
-     private void InstantiateBlock(Vector3 position, EntityDescription description, Vector2 cordination, bool isFrame = false)
+  
+
+    private void InstantiateBlock(Vector3 position, EntityDescription description, Vector2 cordination, bool isFrame = false)
     {
         GameObject obj = Instantiate(placeableEntityPrefab.gameObject, position, Quaternion.identity);
         obj.GetComponent<PlaceableEntityBehaviour>().Initialize(description, cordination);

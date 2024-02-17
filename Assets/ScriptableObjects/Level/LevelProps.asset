@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7176a8a70914c4c40a56f6f244762b6b, type: 3}
   m_Name: LevelProps
   m_EditorClassIdentifier: 
-  width: 13
-  height: 13
+  width: 41
+  height: 99
   countOfPlayer: 4
-  randomType: 0
+  randomType: 2

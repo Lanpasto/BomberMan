@@ -62,3 +62,22 @@ public class PlayerSpawnPointFactory
         }
     }
 }
+/*
+ //Верхній кут лівий
+new Vector3(width - 1, 1, 0f),
+             new Vector3(width - 2, 0, 0f),
+             new Vector3(width - 1, 0, 0f),
+            //Нижній кут правий
+             new Vector3(1, height - 1, 0f),
+             new Vector3(0, height - 2, 0f),
+             new Vector3(0, height - 1, 0f),
+             //Верхній кут правий
+             new Vector3(width - 1, height - 1, 0f),
+             new Vector3(width - 2, height - 1, 0f),
+             new Vector3(width-1 , height-2 , 0f),
+             //Нижній кут лівий
+              new Vector3(0, 1, 0f),
+             new Vector3(1, 0, 0f),
+             new Vector3(0, 0, 0f),
+        };
+*/
