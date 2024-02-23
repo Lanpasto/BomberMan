@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6996322494508464838}
   - component: {fileID: 2165601119665717831}
   - component: {fileID: -4280498917641175058}
+  - component: {fileID: 531561075606119835}
   m_Layer: 0
   m_Name: BombPrefab
   m_TagString: Untagged
@@ -143,4 +144,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d64a5f2ea3ab80f4b9438953351c5151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FireBeam: {fileID: 2268428797302026437, guid: 3e033c6ddec52b144932d796b3cb4fc3, type: 3}
+  flameBeamBehaviour: {fileID: 531561075606119835}
+--- !u!114 &531561075606119835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2789088672845288940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73230c757a6dd2e40a57cedb61b420ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Flame: {fileID: 1666809917018985380, guid: 4d2eb37a347d03049b6775716c0c4bf8, type: 3}
+  FlameStartUp: {fileID: 0}
+  FlameStartUpLeft: {fileID: 0}
+  FlameStartUpDown: {fileID: 0}
+  FlameStartUpRight: {fileID: 0}
+  FlameStartUpLeftRight: {fileID: 0}
+  FlameStartUpLeftDown: {fileID: 0}
+  FlameStartDown: {fileID: 0}
+  FlameStartDownLeft: {fileID: 0}
+  FlameStartDownRight: {fileID: 0}
+  FlameStartDownRightLeft: {fileID: 0}
+  FlameStartDownRightUp: {fileID: 0}
+  FlameStartLeft: {fileID: 0}
+  FlameStartRight: {fileID: 0}
+  FlameStartLeftRight: {fileID: 0}
+  FlameStartLeftRightUpDown: {fileID: 0}
+  FlameEnd: {fileID: 0}

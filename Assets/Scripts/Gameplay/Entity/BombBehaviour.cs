@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BombBehaviour : PlaceableEntityBehaviour
-{ 
+{
+    [SerializeField] private FlameBeamBehaviour flameBeamBehaviour;
+    
     public Action<PlaceableEntityBehaviour> OnExplode = delegate { };
     public UnitAttackBehavior attackBehavior { get; set; }
-
+    
     private StatAttribute BombActivationTime => attackBehavior.unit.GetStat("BombActivationTime");
     private StatAttribute Pierce => attackBehavior.unit.GetStat("Pierce");
     private StatAttribute Radius => attackBehavior.unit.GetStat("Radius");
@@ -66,6 +68,8 @@ public class BombBehaviour : PlaceableEntityBehaviour
         {
              entity.TakeDamage();
         }
+
+        flameBeamBehaviour.Initialize(this.coordinates, entitiesOnWay, 2f);
         Destroy(this.gameObject);
         yield return null;
     }
